@@ -1,110 +1,53 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un nouveau cours{% endblock %}
+{% block title %}Nouveau Cours{% endblock %}
 
 {% block body %}
-<main class="main-area">
-    <div class="form-page-header">
-        <div class="header-breadcrumb">
-            <a href="{{ path('app_course_index') }}" class="breadcrumb-link">
-                <i class="fas fa-arrow-left"></i> Retour aux cours
-            </a>
-        </div>
-        
-        <div class="form-title-section">
-            <div class="form-icon-wrapper create">
-                <i class="fas fa-plus-circle"></i>
-            </div>
-            <div>
-                <h1>Créer un nouveau cours</h1>
-                <p class="form-subtitle">Ajoutez un nouveau cours à votre plateforme d'enseignement</p>
-            </div>
-        </div>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Créer un Nouveau Cours</h1>
     </div>
 
-    <div class="form-container">
-        <div class="form-main-card">
-            {{ form_start(form, {'attr': {'class': 'premium-form'}}) }}
-                <div class="form-section">
-                    <h3 class="form-section-title">
-                        <i class="fas fa-info-circle"></i> Informations générales
-                    </h3>
-                    
-                    <div class="form-group">
-                        {{ form_label(form.title, 'Titre du cours', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.title, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Introduction à la Programmation Web'}}) }}
-                        {{ form_errors(form.title) }}
-                    </div>
-
-                    <div class="form-group">
-                        {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.description, {'attr': {'class': 'form-textarea', 'placeholder': 'Décrivez le contenu et les objectifs de votre cours...', 'rows': '5'}}) }}
-                        {{ form_errors(form.description) }}
-                        <span class="form-help">Une bonne description aide les étudiants à comprendre le contenu du cours</span>
-                    </div>
-
-                    <div class="form-group">
-                        {{ form_label(form.code_unique, 'Code unique', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.code_unique, {'attr': {'class': 'form-input', 'placeholder': 'Ex: PROG-WEB-2024'}}) }}
-                        {{ form_errors(form.code_unique) }}
-                        <span class="form-help">Ce code permet d'identifier le cours de manière unique</span>
-                    </div>
-
-                    {% if form.teacher is defined %}
-                        <div class="form-group">
-                            {{ form_label(form.teacher, 'Enseignant', {'label_attr': {'class': 'form-label'}}) }}
-                            {{ form_widget(form.teacher, {'attr': {'class': 'form-select'}}) }}
-                            {{ form_errors(form.teacher) }}
-                        </div>
-                    {% endif %}
-                </div>
-
-                {{ form_rest(form) }}
-
-                <div class="form-actions">
-                    <a href="{{ path('app_course_index') }}" class="btn-form-cancel">
-                        <i class="fas fa-times"></i> Annuler
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4 border-0">
+                <div class="card-header py-3 bg-white d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Informations du Cours</h6>
+                    <a href="{{ path('app_teacher_dashboard') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour
                     </a>
-                    <button type="submit" class="btn-form-submit">
-                        <i class="fas fa-check"></i> Créer le cours
-                    </button>
                 </div>
-            {{ form_end(form) }}
-        </div>
+                <div class="card-body p-4">
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.title, 'Titre du Cours', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.title, {'attr': {'class': 'form-control', 'placeholder': 'Ex: Introduction à Symfony'}}) }}
+                            {{ form_errors(form.title) }}
+                        </div>
 
-        <div class="form-sidebar">
-            <div class="sidebar-card">
-                <h3><i class="fas fa-lightbulb"></i> Conseils</h3>
-                <ul class="tips-list">
-                    <li>Choisissez un titre clair et descriptif</li>
-                    <li>Ajoutez une description détaillée</li>
-                    <li>Utilisez un code unique facile à retenir</li>
-                    <li>Organisez votre contenu en modules</li>
-                </ul>
-            </div>
+                        <div class="mb-3">
+                            {{ form_label(form.description, 'Description', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control', 'rows': 5, 'placeholder': 'Décrivez le contenu et les objectifs du cours...'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
 
-            <div class="sidebar-card info">
-                <h3><i class="fas fa-info-circle"></i> Prochaines étapes</h3>
-                <div class="steps-list">
-                    <div class="step-item">
-                        <span class="step-number">1</span>
-                        <span>Créer le cours</span>
-                    </div>
-                    <div class="step-item">
-                        <span class="step-number">2</span>
-                        <span>Ajouter des modules</span>
-                    </div>
-                    <div class="step-item">
-                        <span class="step-number">3</span>
-                        <span>Ajouter des ressources</span>
-                    </div>
-                    <div class="step-item">
-                        <span class="step-number">4</span>
-                        <span>Inviter des étudiants</span>
-                    </div>
+                        <div class="mb-3">
+                            {{ form_label(form.code_unique, 'Code Unique', {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.code_unique, {'attr': {'class': 'form-control', 'placeholder': 'Ex: SYM2024'}}) }}
+                            {{ form_errors(form.code_unique) }}
+                            <small class="text-muted">Ce code permettra aux étudiants de s'inscrire au cours</small>
+                        </div>
+
+                        <div class="mt-4 text-end">
+                            <button class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50"><i class="fas fa-save"></i></span>
+                                <span class="text">Créer le Cours</span>
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
                 </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 {% endblock %}

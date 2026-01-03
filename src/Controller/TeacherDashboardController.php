@@ -9,7 +9,9 @@ use App\Repository\ResourceRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 
+#[IsGranted('ROLE_TEACHER')]
 final class TeacherDashboardController extends AbstractController
 {
     #[Route('/teacher/dashboard', name: 'app_teacher_dashboard')]
@@ -33,21 +35,19 @@ final class TeacherDashboardController extends AbstractController
             ->getQuery()
             ->getSingleScalarResult();
 
-        // 3. Nombre total de ressources dans ses cours
-        $resourceCount = $resourceRepository->createQueryBuilder('r')
-            ->select('COUNT(r.id)')
-            ->join('r.module', 'm')
-            ->join('m.course', 'c')
-            ->where('c.teacher = :teacher')
-            ->setParameter('teacher', $teacher)
-            ->getQuery()
-            ->getSingleScalarResult();
+        // Récupérer ses cours
+        $courses = $courseRepository->findBy(['teacher' => $teacher], ['createdAt' => 'DESC']);
+        
+        // Statistiques rapides
+        $stats = [
+            'total_courses' => count($courses),
+            'total_modules' => array_sum(array_map(fn($c) => $c->getModules()->count(), $courses)),
+            'total_students' => array_sum(array_map(fn($c) => $c->getEnrollments()->count(), $courses)),
+        ];
 
         return $this->render('teacher_dashboard/index.html.twig', [
             'courses' => $courses,
-            'courseCount' => $courseCount,
-            'studentCount' => $studentCount,
-            'resourceCount' => $resourceCount,
+            'stats' => $stats,
         ]);
     }
 

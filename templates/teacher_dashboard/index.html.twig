@@ -1,115 +1,133 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Mini-LMS | Tableau de Bord Enseignant{% endblock %}
+{% block title %}Dashboard Enseignant{% endblock %}
 
 {% block body %}
-    <!-- 1. MAIN CONTENT AREA (Already wrapped in dashboard-grid in base) -->
-    <main class="main-area">
-        <!-- Welcome Banner -->
-        <div class="welcome-banner">
-            <h1>Bienvenue, Prof. {{ app.user.prenom }} {{ app.user.nom }}</h1>
-            <p class="quote-text">"L'enseignement, c'est allumer un feu et non remplir un vase." - Aristophane</p>
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Espace Enseignant</h1>
+            <p class="text-muted">Gérez vos cours et suivez vos étudiants</p>
         </div>
+        <a href="{{ path('app_course_new') }}" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Nouveau Cours
+        </a>
+    </div>
 
-        <!-- Horizontal Stats Refined -->
-        <div class="stats-horizontal">
-            <div class="stat-block blue">
-                <span class="value">{{ courseCount }}</span>
-                <span class="label">Cours actifs</span>
-            </div>
-            <div class="stat-block green">
-                <span class="value">{{ studentCount }}</span>
-                <span class="label">Étudiants</span>
-            </div>
-            <div class="stat-block purple">
-                <span class="value">{{ resourceCount }}</span>
-                <span class="label">Ressources</span>
-            </div>
-        </div>
-
-        <div class="section-header mb-5">
-            <h2 class="mb-0">Mes Cours</h2>
-        </div>
-
-        <!-- Courses Stack -->
-        <div class="courses-stack">
-            {% if courses is empty %}
-                <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
-                    <i class="fas fa-book-open fa-3x text-light mb-3"></i>
-                    <p class="text-muted">Vous n'avez pas encore créé de cours.</p>
-                </div>
-            {% else %}
-                {% for course in courses %}
-                    <div class="course-card-premium">
-                        <div class="course-illustration">
-                            {% set title = course.title|lower %}
-                            {% set icon = 'book' %}
-                            {% if 'math' in title or 'calcul' in title %}
-                                {% set icon = 'calculator' %}
-                            {% elseif 'php' in title or 'code' in title or 'programmation' in title or 'python' in title or 'c++' in title %}
-                                {% set icon = 'code' %}
-                            {% elseif 'data' in title or 'donnée' in title %}
-                                {% set icon = 'database' %}
-                            {% elseif 'design' in title or 'ui' in title or 'ux' in title %}
-                                {% set icon = 'palette' %}
-                            {% elseif 'info' in title or 'ordinateur' in title %}
-                                {% set icon = 'desktop' %}
-                            {% elseif 'brain' in title or 'ia' in title or 'intelligence' in title %}
-                                {% set icon = 'brain' %}
-                            {% endif %}
-                            <i class="fas fa-{{ icon }}"></i>
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <!-- Total Courses -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Mes Cours</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_courses }}</div>
                         </div>
-                        <div class="course-details">
-                            <h3>{{ course.title }}</h3>
-                            <p>Découvrez les modules et ressources liés à ce cours interactif.</p>
-                            <div class="course-meta">
-                                <span><i class="fas fa-tag"></i> #{{ course.codeUnique }}</span>
-                                <span><i class="far fa-calendar-alt"></i> {{ course.createdAt|date('d/m/Y') }}</span>
-                            </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book-open fa-2x text-gray-300"></i>
                         </div>
-                        <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn-circle">
-                            <i class="fas fa-arrow-right"></i>
-                        </a>
                     </div>
-                {% endfor %}
-            {% endif %}
-        </div>
-    </main>
-
-    <!-- 2. INFO PANEL (Right) -->
-    <aside class="info-panel">
-        <div class="profile-top">
-            <div class="profile-info-text">
-                <h4 class="mb-0">{{ app.user.prenom }} {{ app.user.nom }}</h4>
-                <span>Professeur</span>
-            </div>
-            <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=4c51bf&color=fff&bold=true" class="profile-avatar-small" alt="Avatar">
-        </div>
-
-        <!-- Calendar Widget -->
-        {% set now = date() %}
-        {% set currentMonth = now|date('F Y') %}
-        {% set currentDay = now|date('j') %}
-        {% set daysInMonth = now|date('t') %}
-        {% set firstDayOfMonth = now|date_modify('-' ~ (currentDay - 1) ~ ' days') %}
-        {% set startDayOfWeek = firstDayOfMonth|date('N') %}
-        
-        <div class="calendar-mock">
-            <div class="calendar-header">
-                <span>{{ currentMonth }}</span>
-            </div>
-            <div class="calendar-grid">
-                <span class="text-muted">L</span><span class="text-muted">M</span><span class="text-muted">M</span><span class="text-muted">J</span><span class="text-muted">V</span><span class="text-muted">S</span><span class="text-muted">D</span>
-                
-                {% for i in 1..(startDayOfWeek - 1) %}
-                    <span class="day-cell empty"></span>
-                {% endfor %}
-                
-                {% for day in 1..daysInMonth %}
-                    <span class="day-cell {{ day == currentDay ? 'active' : '' }}">{{ day }}</span>
-                {% endfor %}
+                </div>
             </div>
         </div>
 
-    </aside>
+        <!-- Total Modules -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Modules Créés</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_modules }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-layer-group fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Total Students -->
+        <div class="col-xl-4 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Étudiants Inscrits</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.total_students }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Courses List -->
+    <div class="row">
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Mes Cours</h6>
+                </div>
+                <div class="card-body">
+                    {% if courses|length > 0 %}
+                        <div class="row">
+                            {% for course in courses %}
+                                <div class="col-lg-6 mb-4">
+                                    <div class="card border-left-primary h-100">
+                                        <div class="card-body">
+                                            <h5 class="card-title text-primary">{{ course.title }}</h5>
+                                            <p class="card-text text-muted small">{{ course.description|slice(0, 100) }}...</p>
+                                            <div class="d-flex justify-content-between align-items-center mt-3">
+                                                <div>
+                                                    <span class="badge bg-info text-white me-2">
+                                                        <i class="fas fa-layer-group"></i> {{ course.modules|length }} modules
+                                                    </span>
+                                                    <span class="badge bg-success text-white">
+                                                        <i class="fas fa-users"></i> {{ course.enrollments|length }} étudiants
+                                                    </span>
+                                                </div>
+                                                <div>
+                                                    <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn btn-sm btn-outline-primary">
+                                                        <i class="fas fa-eye"></i> Voir
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="text-center py-5">
+                            <i class="fas fa-book-open fa-3x text-gray-300 mb-3"></i>
+                            <p class="text-muted">Vous n'avez pas encore créé de cours.</p>
+                            <a href="{{ path('app_course_new') }}" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Créer mon premier cours
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.border-left-primary { border-left: 4px solid #4e73df!important; }
+.border-left-success { border-left: 4px solid #1cc88a!important; }
+.border-left-info { border-left: 4px solid #36b9cc!important; }
+.text-gray-300 { color: #dddfeb!important; }
+.text-gray-800 { color: #5a5c69!important; }
+</style>
 {% endblock %}

@@ -1,78 +1,57 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Créer un Module{% endblock %}
+{% block title %}Nouveau Module{% endblock %}
 
 {% block body %}
-<main class="main-area">
-    <div class="form-page-header">
-        <div class="header-breadcrumb">
-            <a href="{{ path('app_module_index') }}" class="breadcrumb-link">
-                <i class="fas fa-arrow-left"></i> Retour aux modules
-            </a>
-        </div>
-        
-        <div class="form-title-section">
-            <div class="form-icon-wrapper">
-                <i class="fas fa-layer-group"></i>
-            </div>
-            <div>
-                <h1>Créer un nouveau module</h1>
-                <p class="form-subtitle">Ajoutez un module pour organiser le contenu de vos cours</p>
-            </div>
-        </div>
+<div class="container-fluid">
+    <div class="d-sm-flex align-items-center justify-content-between mb-4">
+        <h1 class="h3 mb-0 text-gray-800">Ajouter un Module</h1>
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb mb-0">
+                <li class="breadcrumb-item"><a href="{{ path('app_teacher_dashboard') }}">Dashboard</a></li>
+                <li class="breadcrumb-item"><a href="{{ path('app_course_show', {'id': course.id}) }}">{{ course.title }}</a></li>
+                <li class="breadcrumb-item active">Nouveau Module</li>
+            </ol>
+        </nav>
     </div>
 
-    <div class="form-layout-grid">
-        <div class="form-main-content">
-            <div class="form-card">
-                {{ form_start(form) }}
-                    <div class="form-group">
-                        {{ form_label(form.title, 'Titre du module', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.title, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Introduction aux bases'}}) }}
-                        {{ form_errors(form.title) }}
-                        <span class="form-help">Choisissez un titre clair et descriptif pour votre module</span>
-                    </div>
-
-                    <div class="form-group">
-                        {{ form_label(form.orderIndex, 'Ordre d\'affichage', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.orderIndex, {'attr': {'class': 'form-input', 'placeholder': '1'}}) }}
-                        {{ form_errors(form.orderIndex) }}
-                        <span class="form-help">Définissez l'ordre d'apparition du module dans le cours</span>
-                    </div>
-
-                    <div class="form-group">
-                        {{ form_label(form.course, 'Cours associé', {'label_attr': {'class': 'form-label'}}) }}
-                        {{ form_widget(form.course, {'attr': {'class': 'form-select'}}) }}
-                        {{ form_errors(form.course) }}
-                        <span class="form-help">Sélectionnez le cours auquel ce module appartient</span>
-                    </div>
-
-                    <div class="form-actions">
-                        <button type="submit" class="btn-submit">
-                            <i class="fas fa-check"></i> Créer le module
-                        </button>
-                        <a href="{{ path('app_module_index') }}" class="btn-cancel">
-                            Annuler
-                        </a>
-                    </div>
-                {{ form_end(form) }}
-            </div>
-        </div>
-
-        <div class="form-sidebar">
-            <div class="sidebar-card tips-card">
-                <div class="sidebar-card-icon">
-                    <i class="fas fa-lightbulb"></i>
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card shadow mb-4 border-0">
+                <div class="card-header py-3 bg-white d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Informations du Module</h6>
+                    <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Retour au Cours
+                    </a>
                 </div>
-                <h3>Conseils</h3>
-                <ul class="tips-list">
-                    <li>Utilisez des titres clairs et concis</li>
-                    <li>Organisez vos modules de manière logique</li>
-                    <li>Numérotez vos modules pour faciliter la navigation</li>
-                    <li>Ajoutez des ressources après la création du module</li>
-                </ul>
+                <div class="card-body p-4">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> Ce module sera ajouté au cours <strong>{{ course.title }}</strong>
+                    </div>
+
+                    {{ form_start(form) }}
+                        <div class="mb-3">
+                            {{ form_label(form.title, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.title, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.title) }}
+                        </div>
+
+                        <div class="mb-3">
+                            {{ form_label(form.description, null, {'label_attr': {'class': 'form-label'}}) }}
+                            {{ form_widget(form.description, {'attr': {'class': 'form-control'}}) }}
+                            {{ form_errors(form.description) }}
+                        </div>
+
+                        <div class="mt-4 text-end">
+                            <button class="btn btn-primary btn-icon-split">
+                                <span class="icon text-white-50"><i class="fas fa-save"></i></span>
+                                <span class="text">Créer le Module</span>
+                            </button>
+                        </div>
+                    {{ form_end(form) }}
+                </div>
             </div>
         </div>
     </div>
-</main>
+</div>
 {% endblock %}

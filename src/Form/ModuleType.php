@@ -14,11 +14,14 @@ class ModuleType extends AbstractType
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('title')
-            ->add('orderIndex')
-            ->add('course', EntityType::class, [
-                'class' => Course::class,
-                'choice_label' => 'title',
+            ->add('title', null, [
+                'label' => 'Titre du Module',
+                'attr' => ['placeholder' => 'Ex: Chapitre 1 - Les Bases']
+            ])
+            ->add('description', null, [
+                'label' => 'Description',
+                'required' => false,
+                'attr' => ['rows' => 4, 'placeholder' => 'Décrivez le contenu de ce module...']
             ])
         ;
     }
