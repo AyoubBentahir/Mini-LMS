@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+        <title>{% block title %}Mini-LMS | Connexion{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🎓</text></svg>">
+        
+        {# FontAwesome for icons #}
+        {# Google Fonts - Outfit #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+        {# Bootstrap 5 CSS #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+        {# FontAwesome for icons #}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
+        {% block stylesheets %}
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        {% set show_sidebar = app.user and app.request.attributes.get('_route') != 'app_login' %}
+
+        <div class="{{ show_sidebar ? 'dashboard-grid' : '' }}">
+            {% if show_sidebar %}
+                <!-- GLOBAL SIDEBAR -->
+                <aside class="sidebar">
+                    <nav class="sidebar-menu">
+                        {# 1. MENU ADMIN #}
+                        {% if is_granted('ROLE_ADMIN') %}
+                            <a href="{{ path('app_admin_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-tachometer-alt"></i> <span>Dashboard Admin</span>
+                            </a>
+                            <a href="{{ path('app_user_index') }}" class="nav-item {{ 'app_user' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-users"></i> <span>Utilisateurs</span>
+                            </a>
+                        
+                        {# 2. MENU ENSEIGNANT #}
+                        {% elseif is_granted('ROLE_TEACHER') %}
+                            <a href="{{ path('app_teacher_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_teacher_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                            </a>
+                            <a href="{{ path('app_course_index') }}" class="nav-item {{ 'app_course' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-book"></i> <span>Mes Cours</span>
+                            </a>
+                            <a href="{{ path('app_module_index') }}" class="nav-item {{ 'app_module' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-layer-group"></i> <span>Modules</span>
+                            </a>
+                            <a href="{{ path('app_resource_index') }}" class="nav-item {{ 'app_resource' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-file-alt"></i> <span>Ressources</span>
+                            </a>
+
+                        {# 3. MENU ÉTUDIANT #}
+                        {% elseif is_granted('ROLE_STUDENT') %}
+                            <a href="{{ path('app_student_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_student_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-graduation-cap"></i> <span>Mon Espace</span>
+                            </a>
+                            <a href="{{ path('app_student_catalog') }}" class="nav-item {{ 'app_student_catalog' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-search"></i> <span>Catalogue</span>
+                            </a>
+                        {% endif %}
+
+                        {# LIEN COMMUN : PROFIL #}
+                        <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+                            <i class="fas fa-user-circle"></i> <span>Profil</span>
+                        </a>
+                    </nav>
+
+                    <div class="mt-auto">
+                        <a href="{{ path('app_logout') }}" class="nav-item text-white opacity-75">
+                            <i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span>
+                        </a>
+                    </div>
+                </aside>
+            {% endif %}
+
+            {% block body %}{% endblock %}
+        </div>
+        {# Bootstrap JS Bundle #}
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    </body>
+</html>

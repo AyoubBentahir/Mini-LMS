@@ -1,0 +1,99 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Utilisateurs{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-4">
+    <!-- Page Heading -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            <h1 class="h3 mb-0 text-gray-800">Utilisateurs</h1>
+            <p class="text-muted">Gérez les accès à la plateforme</p>
+        </div>
+        <a href="{{ path('app_user_new') }}" class="btn btn-primary shadow-sm">
+            <i class="fas fa-plus fa-sm text-white-50"></i> Nouvel Utilisateur
+        </a>
+    </div>
+
+    <!-- User Table Card -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Liste des comptes enregistrés</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle">
+                    <thead>
+                        <tr>
+                            <th>Nom & Prénom</th>
+                            <th>Email</th>
+                            <th>Rôle(s)</th>
+                            <th>Inscrit le</th>
+                            <th>Statut</th>
+                            <th class="text-end">Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center">
+                                    <div class="avatar rounded-circle bg-primary text-white d-flex align-items-center justify-content-center me-3" style="width: 40px; height: 40px; font-weight: bold;">
+                                        {{ user.nom|first|upper }}{{ user.prenom|first|upper }}
+                                    </div>
+                                    <div>
+                                        <div class="fw-bold">{{ user.nom }} {{ user.prenom }}</div>
+                                        <small class="text-muted">ID: #{{ user.id }}</small>
+                                    </div>
+                                </div>
+                            </td>
+                            <td>{{ user.email }}</td>
+                            <td>
+                                {% for role in user.roles %}
+                                    {% if role == 'ROLE_SUPER_ADMIN' %}
+                                        <span class="badge bg-danger">Super Admin</span>
+                                    {% elseif role == 'ROLE_ADMIN' %}
+                                        <span class="badge bg-danger text-white">Admin</span>
+                                    {% elseif role == 'ROLE_TEACHER' %}
+                                        <span class="badge bg-success">Enseignant</span>
+                                    {% elseif role == 'ROLE_STUDENT' %}
+                                        <span class="badge bg-info text-dark">Étudiant</span>
+                                    {% elseif role == 'ROLE_USER' %}
+                                        {# Hide default ROLE_USER if others exist, or show as 'Utilisateur' #}
+                                        {% if user.roles|length == 1 %}
+                                            <span class="badge bg-secondary">Utilisateur</span>
+                                        {% endif %}
+                                    {% endif %}
+                                {% endfor %}
+                            </td>
+                            <td>
+                                {{ user.createdAt ? user.createdAt|date('d/m/Y') : '-' }}
+                            </td>
+                            <td>
+                                {% if user.isActive %}
+                                    <span class="badge bg-success"><i class="fas fa-check"></i> Actif</span>
+                                {% else %}
+                                    <span class="badge bg-secondary"><i class="fas fa-ban"></i> Inactif</span>
+                                {% endif %}
+                            </td>
+                            <td class="text-end">
+                                <a href="{{ path('app_user_show', {'id': user.id}) }}" class="btn btn-sm btn-outline-primary" title="Voir">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-outline-warning" title="Éditer">
+                                    <i class="fas fa-edit"></i>
+                                </a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center py-4">Aucun utilisateur trouvé</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

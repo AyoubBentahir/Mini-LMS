@@ -1,0 +1,89 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User{% endblock %}
+
+{% block body %}
+    <div class="container-fluid">
+        <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Gestion des Utilisateurs</h1>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <div class="card shadow mb-4 border-0">
+                    <div class="card-header py-3 bg-white d-flex flex-row align-items-center justify-content-between">
+                        <h6 class="m-0 font-weight-bold text-primary">Détails de l'utilisateur</h6>
+                        <div>
+                            <a href="{{ path('app_user_edit', {'id': user.id}) }}" class="btn btn-sm btn-primary shadow-sm mr-2">
+                                <i class="fas fa-edit fa-sm text-white-50"></i> Modifier
+                            </a>
+                            <a href="{{ path('app_user_index') }}" class="btn btn-sm btn-outline-secondary">
+                                <i class="fas fa-arrow-left"></i> Retour
+                            </a>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-striped mb-0">
+                                <tbody>
+                                    <tr>
+                                        <th class="pl-4" style="width: 30%;">ID</th>
+                                        <td>{{ user.id }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-4">Email</th>
+                                        <td>{{ user.email }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-4">Nom Complet</th>
+                                        <td>{{ user.prenom }} {{ user.nom }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-4">Rôles</th>
+                                        <td>
+                                            {% for role in user.roles %}
+                                                {% if role == 'ROLE_SUPER_ADMIN' %}
+                                                    <span class="badge bg-danger">Directeur</span>
+                                                {% elseif role == 'ROLE_ADMIN' %}
+                                                    <span class="badge bg-warning text-dark">Admin</span>
+                                                {% elseif role == 'ROLE_TEACHER' %}
+                                                    <span class="badge bg-info text-white">Enseignant</span>
+                                                {% elseif role == 'ROLE_STUDENT' %}
+                                                    <span class="badge bg-primary">Étudiant</span>
+                                                {% else %}
+                                                    <span class="badge bg-secondary">{{ role }}</span>
+                                                {% endif %}
+                                            {% endfor %}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-4">Date d'inscription</th>
+                                        <td>{{ user.createdAt ? user.createdAt|date('d/m/Y H:i') : '' }}</td>
+                                    </tr>
+                                    <tr>
+                                        <th class="pl-4">Statut</th>
+                                        <td>
+                                            {% if user.isActive %}
+                                                <span class="badge bg-success">Actif</span>
+                                            {% else %}
+                                                <span class="badge bg-secondary">Inactif</span>
+                                            {% endif %}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-white text-center py-3">
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            <span class="text-danger small font-weight-bold mr-2">Zone de danger :</span>
+                            {{ include('user/_delete_form.html.twig') }}
+                        {% else %}
+                            <span class="text-muted small"> seul le directeur peut supprimer un utilisateur.</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

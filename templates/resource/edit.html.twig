@@ -1,0 +1,110 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la Ressource{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="form-page-header">
+        <div class="header-breadcrumb">
+            <a href="{{ path('app_resource_show', {'id': resource.id}) }}" class="breadcrumb-link">
+                <i class="fas fa-arrow-left"></i> Retour à la ressource
+            </a>
+        </div>
+        
+        <div class="form-title-section">
+            <div class="form-icon-wrapper">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div>
+                <h1>Modifier la ressource</h1>
+                <p class="form-subtitle">Mettez à jour les informations de votre ressource</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-layout-grid">
+        <div class="form-main-content">
+            <div class="form-card">
+                {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_label(form.title, 'Titre de la ressource', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.title, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Cours d\'introduction'}}) }}
+                        {{ form_errors(form.title) }}
+                        <span class="form-help">Choisissez un titre descriptif pour votre ressource</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.type, 'Type de ressource', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.type) }}
+                        <span class="form-help">Sélectionnez le type de contenu que vous souhaitez ajouter</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.file, 'Fichier (PDF, DOCX)', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.file, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.file) }}
+                        <span class="form-help">Téléchargez un nouveau fichier pour remplacer l'ancien (Max: 10MB)</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.content, 'Contenu (URL ou Texte)', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.content, {'attr': {'class': 'form-textarea', 'placeholder': 'Entrez une URL ou du texte...', 'rows': '6'}}) }}
+                        {{ form_errors(form.content) }}
+                        <span class="form-help">Pour un lien externe, entrez l'URL complète. Pour du texte, rédigez votre contenu ici</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.module, 'Module associé', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.module, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.module) }}
+                        <span class="form-help">Sélectionnez le module auquel cette ressource appartient</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check"></i> Enregistrer les modifications
+                        </button>
+                        <a href="{{ path('app_resource_show', {'id': resource.id}) }}" class="btn-cancel">
+                            Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="form-sidebar">
+            <div class="sidebar-card tips-card">
+                <div class="sidebar-card-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Types de ressources</h3>
+                <ul class="tips-list">
+                    <li><strong>Fichier :</strong> PDF, DOCX pour des documents</li>
+                    <li><strong>Lien externe :</strong> URL vers une vidéo ou site web</li>
+                    <li><strong>Texte riche :</strong> Contenu textuel directement dans la plateforme</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-card danger">
+                <h3><i class="fas fa-exclamation-triangle"></i> Zone de danger</h3>
+                <p class="danger-text">La suppression de cette ressource est irréversible.</p>
+                <button type="button" class="btn-danger-action" onclick="document.getElementById('deleteModal').style.display='flex'">
+                    <i class="fas fa-trash"></i> Supprimer la ressource
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;" onclick="if(event.target === this) this.style.display='none'">
+        <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; text-align: center;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc2626; margin-bottom: 20px;"></i>
+            <h2 style="margin-bottom: 15px; color: #1e293b;">Confirmer la suppression</h2>
+            <p style="color: #64748b; margin-bottom: 30px;">Êtes-vous sûr de vouloir supprimer cette ressource ? Cette action est irréversible.</p>
+            {{ include('resource/_delete_form.html.twig') }}
+            <button onclick="document.getElementById('deleteModal').style.display='none'" style="margin-left: 10px; padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 30px; font-weight: 600; cursor: pointer;">Annuler</button>
+        </div>
+    </div>
+</main>
+{% endblock %}

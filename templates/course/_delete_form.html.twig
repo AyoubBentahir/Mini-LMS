@@ -1,0 +1,6 @@
+<form method="post" action="{{ path('app_course_delete', {'id': course.id}) }}" class="delete-form-inline">
+    <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ course.id) }}">
+    <button type="submit" class="btn-delete-confirm">
+        <i class="fas fa-trash"></i> Confirmer la suppression
+    </button>
+</form>

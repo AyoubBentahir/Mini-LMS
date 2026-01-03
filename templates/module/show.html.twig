@@ -1,0 +1,152 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ module.title }}{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="course-view-header">
+        <div class="header-breadcrumb">
+            <a href="{{ path('app_module_index') }}" class="breadcrumb-link">
+                <i class="fas fa-arrow-left"></i> Retour aux modules
+            </a>
+        </div>
+        
+        <div class="header-title-section">
+            <div class="course-title-wrapper">
+                <div class="course-view-icon">
+                    <i class="fas fa-layer-group"></i>
+                </div>
+                
+                <div class="course-title-info">
+                    <h1>{{ module.title }}</h1>
+                </div>
+            </div>
+            
+            <div class="course-actions-group">
+                <a href="{{ path('app_module_edit', {'id': module.id}) }}" class="btn-action-primary">
+                    <i class="fas fa-edit"></i> Modifier
+                </a>
+                <button type="button" class="btn-action-danger" onclick="document.getElementById('deleteForm').style.display='block'">
+                    <i class="fas fa-trash"></i> Supprimer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div class="course-view-grid">
+        <div class="course-main-content">
+            <div class="info-card">
+                <div class="info-card-header">
+                    <h2><i class="fas fa-info-circle"></i> Informations du module</h2>
+                </div>
+                <div class="info-card-body">
+                    <div class="info-grid">
+                        <div class="info-item">
+                            <span class="info-label">Cours associé</span>
+                            <div class="course-badge-info">
+                                <i class="fas fa-book"></i>
+                                <span>{{ module.course ? module.course.title : 'Non assigné' }}</span>
+                            </div>
+                        </div>
+                        <div class="info-item">
+                            <span class="info-label">Ordre d'affichage</span>
+                            <div class="order-badge">
+                                <i class="fas fa-sort-numeric-up"></i>
+                                <span>{{ module.orderIndex }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="info-card">
+                <div class="info-card-header">
+                    <h2><i class="fas fa-file-alt"></i> Ressources du module</h2>
+                    <span class="badge-count">{{ module.resources|length }}</span>
+                </div>
+                <div class="info-card-body">
+                    {% if module.resources|length > 0 %}
+                        <div class="modules-list">
+                            {% for resource in module.resources %}
+                                <div class="module-item">
+                                    <div class="module-number">{{ loop.index }}</div>
+                                    <div class="module-details">
+                                        <h4>{{ resource.title }}</h4>
+                                        <span class="module-resources">
+                                            <i class="fas fa-file"></i>
+                                            {{ resource.type|default('Document') }}
+                                        </span>
+                                    </div>
+                                    <a href="{{ path('app_resource_show', {'id': resource.id}) }}" class="btn-module-view">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-modules">
+                            <i class="fas fa-file-alt"></i>
+                            <p>Aucune ressource créée pour ce module</p>
+                            <a href="{{ path('app_resource_new') }}" class="btn-add-module">
+                                Ajouter une ressource
+                            </a>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="course-sidebar-info">
+            <div class="stats-card">
+                <h3>Statistiques</h3>
+                <div class="stat-item-large">
+                    <div class="stat-icon green">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-value">{{ module.resources|length }}</span>
+                        <span class="stat-label">Ressources</span>
+                    </div>
+                </div>
+                
+                <div class="stat-item-large">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-sort-numeric-up"></i>
+                    </div>
+                    <div class="stat-details">
+                        <span class="stat-value">{{ module.orderIndex }}</span>
+                        <span class="stat-label">Position</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="quick-actions-card">
+                <h3>Actions rapides</h3>
+                <a href="{{ path('app_resource_new') }}" class="quick-action-btn">
+                    <i class="fas fa-file-upload"></i>
+                    <span>Ajouter une ressource</span>
+                </a>
+                <a href="{{ path('app_module_index') }}" class="quick-action-btn">
+                    <i class="fas fa-list"></i>
+                    <span>Voir tous les modules</span>
+                </a>
+                <a href="{{ path('app_module_edit', {'id': module.id}) }}" class="quick-action-btn">
+                    <i class="fas fa-edit"></i>
+                    <span>Modifier ce module</span>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteForm" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;" onclick="if(event.target === this) this.style.display='none'">
+        <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; text-align: center;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc2626; margin-bottom: 20px;"></i>
+            <h2 style="margin-bottom: 15px; color: #1e293b;">Confirmer la suppression</h2>
+            <p style="color: #64748b; margin-bottom: 30px;">Êtes-vous sûr de vouloir supprimer ce module ? Cette action est irréversible.</p>
+            {{ include('module/_delete_form.html.twig') }}
+            <button onclick="document.getElementById('deleteForm').style.display='none'" style="margin-left: 10px; padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 30px; font-weight: 600; cursor: pointer;">Annuler</button>
+        </div>
+    </div>
+</main>
+{% endblock %}

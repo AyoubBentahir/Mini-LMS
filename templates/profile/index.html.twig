@@ -1,0 +1,204 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="profile-header">
+        <div class="profile-banner">
+            <div class="banner-gradient"></div>
+        </div>
+        
+        <div class="profile-header-content">
+            <div class="profile-avatar-section">
+                <div class="profile-avatar-large">
+                    <img src="https://ui-avatars.com/api/?name={{ user.prenom }}+{{ user.nom }}&background=3b82f6&color=fff&bold=true&size=150" alt="Avatar">
+                    <div class="avatar-status"></div>
+                </div>
+                
+                <div class="profile-main-info">
+                    <h1>{{ user.prenom }} {{ user.nom }}</h1>
+                    <div class="profile-role-badge">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                        {% if 'ROLE_TEACHER' in user.roles %}
+                            Professeur
+                        {% elseif 'ROLE_STUDENT' in user.roles %}
+                            Étudiant
+                        {% elseif 'ROLE_ADMIN' in user.roles %}
+                            Administrateur
+                        {% else %}
+                            Utilisateur
+                        {% endif %}
+                    </div>
+                    <div class="profile-meta">
+                        <span class="meta-item">
+                            <i class="fas fa-envelope"></i>
+                            {{ user.email }}
+                        </span>
+                        <span class="meta-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            Membre depuis {{ user.createdAt ? user.createdAt|date('F Y') : 'N/A' }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="profile-content-grid">
+        <div class="profile-main-column">
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h2><i class="fas fa-user"></i> Informations personnelles</h2>
+                </div>
+                <div class="profile-card-body">
+                    <div class="info-row">
+                        <div class="info-item-profile">
+                            <span class="info-label-profile">Prénom</span>
+                            <span class="info-value-profile">{{ user.prenom }}</span>
+                        </div>
+                        <div class="info-item-profile">
+                            <span class="info-label-profile">Nom</span>
+                            <span class="info-value-profile">{{ user.nom }}</span>
+                        </div>
+                    </div>
+                    
+                    <div class="info-row">
+                        <div class="info-item-profile">
+                            <span class="info-label-profile">Email</span>
+                            <span class="info-value-profile">{{ user.email }}</span>
+                        </div>
+                        <div class="info-item-profile">
+                            <span class="info-label-profile">Rôle</span>
+                            <span class="info-value-profile">
+                                {% if 'ROLE_TEACHER' in user.roles %}
+                                    Professeur
+                                {% elseif 'ROLE_STUDENT' in user.roles %}
+                                    Étudiant
+                                {% elseif 'ROLE_ADMIN' in user.roles %}
+                                    Administrateur
+                                {% else %}
+                                    Utilisateur
+                                {% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if 'ROLE_TEACHER' in user.roles or 'ROLE_ADMIN' in user.roles or 'ROLE_SUPER_ADMIN' in user.roles %}
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h2><i class="fas fa-book"></i> Mes Cours</h2>
+                    <span class="badge-count">{{ courseCount }}</span>
+                </div>
+                <div class="profile-card-body">
+                    {% if courses|length > 0 %}
+                        <div class="courses-grid-profile">
+                            {% for course in courses %}
+                                <div class="course-card-profile">
+                                    <div class="course-icon-profile">
+                                        {% set title = course.title|lower %}
+                                        {% if 'math' in title or 'calcul' in title %}
+                                            <i class="fas fa-calculator"></i>
+                                        {% elseif 'php' in title or 'code' in title or 'programmation' in title or 'python' in title or 'c++' in title %}
+                                            <i class="fas fa-code"></i>
+                                        {% elseif 'data' in title or 'donnée' in title %}
+                                            <i class="fas fa-database"></i>
+                                        {% else %}
+                                            <i class="fas fa-book"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="course-info-profile">
+                                        <h4>{{ course.title }}</h4>
+                                        <div class="course-stats-profile">
+                                            <span><i class="fas fa-layer-group"></i> {{ course.modules|length }} modules</span>
+                                        </div>
+                                    </div>
+                                    <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn-view-course">
+                                        <i class="fas fa-arrow-right"></i>
+                                    </a>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    {% else %}
+                        <div class="empty-state">
+                            <i class="fas fa-book-open"></i>
+                            <p>Aucun cours créé pour le moment</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endif %}
+        </div>
+
+        <div class="profile-sidebar-column">
+            <div class="profile-card stats-overview-card">
+                <div class="profile-card-header">
+                    <h2><i class="fas fa-chart-line"></i> Statistiques</h2>
+                </div>
+                <div class="profile-card-body">
+                    <div class="stat-item-profile">
+                        <div class="stat-icon-profile blue">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        <div class="stat-content-profile">
+                            <span class="stat-value-profile">{{ courseCount }}</span>
+                            <span class="stat-label-profile">Cours créés</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item-profile">
+                        <div class="stat-icon-profile green">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-content-profile">
+                            <span class="stat-value-profile">{{ studentCount }}</span>
+                            <span class="stat-label-profile">Étudiants</span>
+                        </div>
+                    </div>
+                    
+                    <div class="stat-item-profile">
+                        <div class="stat-icon-profile purple">
+                            <i class="fas fa-file-alt"></i>
+                        </div>
+                        <div class="stat-content-profile">
+                            <span class="stat-value-profile">{{ resourceCount }}</span>
+                            <span class="stat-label-profile">Ressources</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-card">
+                <div class="profile-card-header">
+                    <h2><i class="fas fa-clock"></i> Activité récente</h2>
+                </div>
+                <div class="profile-card-body">
+                    <div class="activity-timeline">
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-book"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p class="activity-text">Cours créés</p>
+                                <span class="activity-time">{{ courseCount }} cours</span>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-user-check"></i>
+                            </div>
+                            <div class="activity-content">
+                                <p class="activity-text">Compte actif</p>
+                                <span class="activity-time">En ligne</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

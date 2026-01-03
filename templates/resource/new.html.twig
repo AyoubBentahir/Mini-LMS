@@ -1,0 +1,104 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une Ressource{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="form-page-header">
+        <div class="header-breadcrumb">
+            <a href="{{ path('app_resource_index') }}" class="breadcrumb-link">
+                <i class="fas fa-arrow-left"></i> Retour aux ressources
+            </a>
+        </div>
+        
+        <div class="form-title-section">
+            <div class="form-icon-wrapper">
+                <i class="fas fa-file-alt"></i>
+            </div>
+            <div>
+                <h1>Créer une nouvelle ressource</h1>
+                <p class="form-subtitle">Ajoutez du contenu pédagogique à vos modules</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-layout-grid">
+        <div class="form-main-content">
+            <div class="form-card">
+                {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_label(form.title, 'Titre de la ressource', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.title, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Cours d\'introduction'}}) }}
+                        {{ form_errors(form.title) }}
+                        <span class="form-help">Choisissez un titre descriptif pour votre ressource</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.type, 'Type de ressource', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.type) }}
+                        <span class="form-help">Sélectionnez le type de contenu que vous souhaitez ajouter</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.file, 'Fichier (PDF, DOCX)', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.file, {'attr': {'class': 'form-input'}}) }}
+                        {{ form_errors(form.file) }}
+                        <span class="form-help">Téléchargez un fichier si vous avez sélectionné "Fichier" comme type (Max: 10MB)</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.content, 'Contenu (URL ou Texte)', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.content, {'attr': {'class': 'form-textarea', 'placeholder': 'Entrez une URL ou du texte...', 'rows': '6'}}) }}
+                        {{ form_errors(form.content) }}
+                        <span class="form-help">Pour un lien externe, entrez l'URL complète. Pour du texte, rédigez votre contenu ici</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.module, 'Module associé', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.module, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.module) }}
+                        <span class="form-help">Sélectionnez le module auquel cette ressource appartient</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check"></i> Créer la ressource
+                        </button>
+                        <a href="{{ path('app_resource_index') }}" class="btn-cancel">
+                            Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="form-sidebar">
+            <div class="sidebar-card tips-card">
+                <div class="sidebar-card-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Types de ressources</h3>
+                <ul class="tips-list">
+                    <li><strong>Fichier :</strong> PDF, DOCX pour des documents</li>
+                    <li><strong>Lien externe :</strong> URL vers une vidéo ou site web</li>
+                    <li><strong>Texte riche :</strong> Contenu textuel directement dans la plateforme</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-card">
+                <div class="sidebar-card-icon">
+                    <i class="fas fa-info-circle"></i>
+                </div>
+                <h3>Conseils</h3>
+                <ul class="tips-list">
+                    <li>Utilisez des titres clairs et explicites</li>
+                    <li>Organisez vos ressources par module</li>
+                    <li>Vérifiez la taille des fichiers (max 10MB)</li>
+                    <li>Testez les liens externes avant de les publier</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}

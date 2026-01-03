@@ -1,0 +1,115 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mini-LMS | Tableau de Bord Enseignant{% endblock %}
+
+{% block body %}
+    <!-- 1. MAIN CONTENT AREA (Already wrapped in dashboard-grid in base) -->
+    <main class="main-area">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner">
+            <h1>Bienvenue, Prof. {{ app.user.prenom }} {{ app.user.nom }}</h1>
+            <p class="quote-text">"L'enseignement, c'est allumer un feu et non remplir un vase." - Aristophane</p>
+        </div>
+
+        <!-- Horizontal Stats Refined -->
+        <div class="stats-horizontal">
+            <div class="stat-block blue">
+                <span class="value">{{ courseCount }}</span>
+                <span class="label">Cours actifs</span>
+            </div>
+            <div class="stat-block green">
+                <span class="value">{{ studentCount }}</span>
+                <span class="label">Étudiants</span>
+            </div>
+            <div class="stat-block purple">
+                <span class="value">{{ resourceCount }}</span>
+                <span class="label">Ressources</span>
+            </div>
+        </div>
+
+        <div class="section-header mb-5">
+            <h2 class="mb-0">Mes Cours</h2>
+        </div>
+
+        <!-- Courses Stack -->
+        <div class="courses-stack">
+            {% if courses is empty %}
+                <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
+                    <i class="fas fa-book-open fa-3x text-light mb-3"></i>
+                    <p class="text-muted">Vous n'avez pas encore créé de cours.</p>
+                </div>
+            {% else %}
+                {% for course in courses %}
+                    <div class="course-card-premium">
+                        <div class="course-illustration">
+                            {% set title = course.title|lower %}
+                            {% set icon = 'book' %}
+                            {% if 'math' in title or 'calcul' in title %}
+                                {% set icon = 'calculator' %}
+                            {% elseif 'php' in title or 'code' in title or 'programmation' in title or 'python' in title or 'c++' in title %}
+                                {% set icon = 'code' %}
+                            {% elseif 'data' in title or 'donnée' in title %}
+                                {% set icon = 'database' %}
+                            {% elseif 'design' in title or 'ui' in title or 'ux' in title %}
+                                {% set icon = 'palette' %}
+                            {% elseif 'info' in title or 'ordinateur' in title %}
+                                {% set icon = 'desktop' %}
+                            {% elseif 'brain' in title or 'ia' in title or 'intelligence' in title %}
+                                {% set icon = 'brain' %}
+                            {% endif %}
+                            <i class="fas fa-{{ icon }}"></i>
+                        </div>
+                        <div class="course-details">
+                            <h3>{{ course.title }}</h3>
+                            <p>Découvrez les modules et ressources liés à ce cours interactif.</p>
+                            <div class="course-meta">
+                                <span><i class="fas fa-tag"></i> #{{ course.codeUnique }}</span>
+                                <span><i class="far fa-calendar-alt"></i> {{ course.createdAt|date('d/m/Y') }}</span>
+                            </div>
+                        </div>
+                        <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn-circle">
+                            <i class="fas fa-arrow-right"></i>
+                        </a>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        </div>
+    </main>
+
+    <!-- 2. INFO PANEL (Right) -->
+    <aside class="info-panel">
+        <div class="profile-top">
+            <div class="profile-info-text">
+                <h4 class="mb-0">{{ app.user.prenom }} {{ app.user.nom }}</h4>
+                <span>Professeur</span>
+            </div>
+            <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=4c51bf&color=fff&bold=true" class="profile-avatar-small" alt="Avatar">
+        </div>
+
+        <!-- Calendar Widget -->
+        {% set now = date() %}
+        {% set currentMonth = now|date('F Y') %}
+        {% set currentDay = now|date('j') %}
+        {% set daysInMonth = now|date('t') %}
+        {% set firstDayOfMonth = now|date_modify('-' ~ (currentDay - 1) ~ ' days') %}
+        {% set startDayOfWeek = firstDayOfMonth|date('N') %}
+        
+        <div class="calendar-mock">
+            <div class="calendar-header">
+                <span>{{ currentMonth }}</span>
+            </div>
+            <div class="calendar-grid">
+                <span class="text-muted">L</span><span class="text-muted">M</span><span class="text-muted">M</span><span class="text-muted">J</span><span class="text-muted">V</span><span class="text-muted">S</span><span class="text-muted">D</span>
+                
+                {% for i in 1..(startDayOfWeek - 1) %}
+                    <span class="day-cell empty"></span>
+                {% endfor %}
+                
+                {% for day in 1..daysInMonth %}
+                    <span class="day-cell {{ day == currentDay ? 'active' : '' }}">{{ day }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+    </aside>
+{% endblock %}

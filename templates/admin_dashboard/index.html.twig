@@ -1,0 +1,260 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Dashboard Admin{% endblock %}
+
+{% block body %}
+<div class="container-fluid p-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <div>
+            {% if is_granted('ROLE_SUPER_ADMIN') %}
+                <h1 class="h3 mb-0 text-gray-800">Tableau de Bord <span class="badge bg-danger text-white" style="font-size: 0.6em; vertical-align: middle;">Directeur</span></h1>
+                <p class="text-muted">Vue stratégique et pilotage global</p>
+            {% else %}
+                <h1 class="h3 mb-0 text-gray-800">Tableau de Bord Admin</h1>
+                <p class="text-muted">Gestion quotidienne de la plateforme</p>
+            {% endif %}
+        </div>
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <a href="#" class="btn btn-primary shadow-sm">
+            <i class="fas fa-download fa-sm text-white-50"></i> Générer Rapport
+        </a>
+        {% endif %}
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row mb-4">
+        <!-- Total Users Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">
+                                Utilisateurs (Total)</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.users }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-users fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Teachers Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-success text-uppercase mb-1">
+                                Enseignants</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.teachers }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-chalkboard-teacher fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Students Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-info text-uppercase mb-1">
+                                Étudiants</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.students }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-user-graduate fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Courses Card -->
+        <div class="col-xl-3 col-md-6 mb-4">
+            <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                    <div class="row no-gutters align-items-center">
+                        <div class="col mr-2">
+                            <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">
+                                Cours Créés</div>
+                            <div class="h5 mb-0 font-weight-bold text-gray-800">{{ stats.courses }}</div>
+                        </div>
+                        <div class="col-auto">
+                            <i class="fas fa-book-open fa-2x text-gray-300"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Charts Row -->
+    <div class="row mb-4">
+        <!-- User Distribution Chart (Visible to all Admins) -->
+        <div class="col-xl-4 col-lg-5">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Répartition des Utilisateurs</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-pie pt-4 pb-2">
+                        <canvas id="myPieChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Course/Content Stats (Super Admin Only) -->
+        {% if is_granted('ROLE_SUPER_ADMIN') %}
+        <div class="col-xl-8 col-lg-7">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3">
+                    <h6 class="m-0 font-weight-bold text-primary">Volume de Contenu (Vue Directeur)</h6>
+                </div>
+                <div class="card-body">
+                    <div class="chart-bar">
+                        <canvas id="myBarChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+
+    
+    <!-- Content Row -->
+    <div class="row">
+        <!-- Recent Users -->
+        <div class="col-lg-12 mb-4">
+            <div class="card shadow mb-4">
+                <div class="card-header py-3 d-flex flex-row align-items-center justify-content-between">
+                    <h6 class="m-0 font-weight-bold text-primary">Derniers Inscrits</h6>
+                    <div class="dropdown no-arrow">
+                        <a href="{{ path('app_user_index') }}" class="btn btn-sm btn-primary">Voir tout</a>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-bordered" width="100%" cellspacing="0">
+                            <thead>
+                                <tr>
+                                    <th>Nom Complet</th>
+                                    <th>Email</th>
+                                    <th>Rôle</th>
+                                    <th>Date d'inscription</th>
+                                    <th>Statut</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for user in latest_users %}
+                                <tr>
+                                    <td>{{ user.prenom }} {{ user.nom }}</td>
+                                    <td>{{ user.email }}</td>
+                                    <td>
+                                        {% if 'ROLE_SUPER_ADMIN' in user.roles %}
+                                            <span class="badge bg-danger">Super Admin</span>
+                                        {% elseif 'ROLE_ADMIN' in user.roles %}
+                                            <span class="badge bg-danger">Admin</span>
+                                        {% elseif 'ROLE_TEACHER' in user.roles %}
+                                            <span class="badge bg-success">Enseignant</span>
+                                        {% else %}
+                                            <span class="badge bg-primary">Étudiant</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>{{ user.createdAt|date('d/m/Y H:i') }}</td>
+                                    <td>
+                                        {% if user.isActive %}
+                                            <span class="badge bg-success">Actif</span>
+                                        {% else %}
+                                            <span class="badge bg-secondary">Inactif</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% else %}
+                                    <tr>
+                                        <td colspan="5" class="text-center">Aucun utilisateur trouvé.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+/* Petits ajustements pour le dashboard Admin */
+.border-left-primary { border-left: 4px solid #4e73df!important; }
+.border-left-success { border-left: 4px solid #1cc88a!important; }
+.border-left-info { border-left: 4px solid #36b9cc!important; }
+.border-left-warning { border-left: 4px solid #f6c23e!important; }
+.text-gray-300 { color: #dddfeb!important; }
+.text-gray-800 { color: #5a5c69!important; }
+.chart-pie { height: 250px; position: relative; }
+.chart-bar { height: 250px; position: relative; }
+</style>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Pie Chart
+    var ctxPie = document.getElementById("myPieChart");
+    var myPieChart = new Chart(ctxPie, {
+        type: 'doughnut',
+        data: {
+            labels: ["Enseignants", "Étudiants", "Admins"],
+            datasets: [{
+                data: [{{ stats.teachers }}, {{ stats.students }}, {{ stats.users - stats.teachers - stats.students }}],
+                backgroundColor: ['#1cc88a', '#36b9cc', '#4e73df'],
+                hoverBackgroundColor: ['#17a673', '#2c9faf', '#2e59d9'],
+                hoverBorderColor: "rgba(234, 236, 244, 1)",
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            cutout: '70%',
+            plugins: {
+                legend: {
+                    position: 'bottom'
+                }
+            }
+        },
+    });
+
+    // Bar Chart
+    var ctxBar = document.getElementById("myBarChart");
+    var myBarChart = new Chart(ctxBar, {
+        type: 'bar',
+        data: {
+            labels: ["Utilisateurs", "Cours", "Ressources (Est.)"],
+            datasets: [{
+                label: "Total",
+                backgroundColor: "#4e73df",
+                hoverBackgroundColor: "#2e59d9",
+                borderColor: "#4e73df",
+                data: [{{ stats.users }}, {{ stats.courses }}, {{ stats.courses * 3 }}], 
+            }],
+        },
+        options: {
+            maintainAspectRatio: false,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+});
+</script>
+{% endblock %}

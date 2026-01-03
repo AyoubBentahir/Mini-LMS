@@ -1,0 +1,155 @@
+/* Responsive Utilities - Adaptabilité globale pour tous les écrans */
+
+/* Conteneurs fluides */
+.container-fluid {
+    width: 100%;
+    max-width: 100%;
+    padding-right: 15px;
+    padding-left: 15px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+/* Images responsives */
+img {
+    max-width: 100%;
+    height: auto;
+}
+
+/* Tables responsives */
+@media (max-width: 768px) {
+    table {
+        display: block;
+        overflow-x: auto;
+        white-space: nowrap;
+    }
+}
+
+/* Texte responsive */
+@media (max-width: 1400px) {
+    html {
+        font-size: 16px;
+    }
+}
+
+@media (max-width: 1024px) {
+    html {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 768px) {
+    html {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    html {
+        font-size: 13px;
+    }
+}
+
+/* Grilles responsives génériques */
+.grid-responsive {
+    display: grid;
+    gap: 20px;
+}
+
+@media (min-width: 1400px) {
+    .grid-responsive {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (min-width: 1024px) and (max-width: 1399px) {
+    .grid-responsive {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .grid-responsive {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .grid-responsive {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Espacement responsive */
+@media (max-width: 768px) {
+    .spacing-responsive {
+        margin: 15px 0;
+        padding: 15px;
+    }
+}
+
+@media (max-width: 480px) {
+    .spacing-responsive {
+        margin: 10px 0;
+        padding: 10px;
+    }
+}
+
+/* Boutons responsive */
+@media (max-width: 768px) {
+    .btn-responsive {
+        width: 100%;
+        display: block;
+        text-align: center;
+    }
+}
+
+/* Cartes responsive */
+.card-responsive {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+@media (max-width: 768px) {
+    .card-responsive {
+        margin-bottom: 15px;
+    }
+}
+
+/* Flexbox responsive */
+.flex-responsive {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .flex-responsive {
+        flex-direction: column;
+    }
+}
+
+/* Masquer/Afficher selon l'écran */
+@media (max-width: 768px) {
+    .hide-mobile {
+        display: none !important;
+    }
+}
+
+@media (min-width: 769px) {
+    .show-mobile {
+        display: none !important;
+    }
+}
+
+@media (max-width: 1024px) {
+    .hide-tablet {
+        display: none !important;
+    }
+}
+
+@media (min-width: 1025px) {
+    .show-tablet {
+        display: none !important;
+    }
+}
