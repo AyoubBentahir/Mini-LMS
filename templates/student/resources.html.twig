@@ -1,0 +1,142 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Ressources{% endblock %}
+
+{% block body %}
+<!-- HEADER -->
+<div class="bg-emerald-900 text-white pt-10 pb-20 px-4 md:px-8 shadow-lg relative overflow-hidden">
+    <!-- Decorative Background -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-emerald-500 opacity-20 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+        <h1 class="text-3xl font-bold mb-2">Bibliothèque de Ressources</h1>
+        <p class="text-emerald-200 text-lg">Tous vos documents, vidéos et liens en un seul endroit.</p>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="max-w-7xl mx-auto px-4 md:px-8 -mt-12 relative z-20 pb-12">
+    
+    <!-- Filter Bar -->
+    <div class="bg-white rounded-xl shadow-sm p-2 mb-8 inline-flex flex-wrap gap-2 border border-gray-100">
+        <button onclick="filterResources('all')" class="filter-btn active px-4 py-2 rounded-lg text-sm font-bold transition-colors bg-emerald-100 text-emerald-800" data-filter="all">
+            Tout
+        </button>
+        <button onclick="filterResources('pdf')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors" data-filter="pdf">
+            <i class="fas fa-file-pdf mr-2"></i>PDFs
+        </button>
+        <button onclick="filterResources('video')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors" data-filter="video">
+            <i class="fas fa-video mr-2"></i>Vidéos
+        </button>
+        <button onclick="filterResources('link')" class="filter-btn px-4 py-2 rounded-lg text-sm font-bold text-gray-600 hover:bg-gray-100 transition-colors" data-filter="link">
+            <i class="fas fa-link mr-2"></i>Liens
+        </button>
+    </div>
+
+    {% if resources is empty %}
+         <div class="bg-white rounded-2xl shadow-sm p-12 text-center border border-gray-100">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                <i class="fas fa-folder-open text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Aucune ressource disponible</h3>
+            <p class="text-gray-500 mb-6">Vos cours ne contiennent pas encore de fichiers.</p>
+        </div>
+    {% else %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="resources-grid">
+            {% for resource in resources %}
+                {% set type = resource.type|default('file')|lower %}
+                {% set content = resource.content|default('')|lower %}
+                
+                {# Normalize type for filtering #}
+                {% if type == 'pdf' or type == 'doc' or content ends with '.pdf' %} 
+                    {% set filter_type = 'pdf' %}
+                {% elseif type == 'video' or type == 'mp4' or content ends with '.mp4' or content ends with '.mov' %} 
+                    {% set filter_type = 'video' %}
+                {% elseif type == 'link' or type == 'url' or content starts with 'http' %} 
+                    {% set filter_type = 'link' %}
+                {% else %} 
+                    {# Default to PDF if generic file but likely document #}
+                    {% if type == 'file' %}
+                        {% set filter_type = 'pdf' %}
+                    {% else %}
+                        {% set filter_type = 'other' %}
+                    {% endif %}
+                {% endif %}
+
+                {% set icon = 'file' %}
+                {% set color = 'gray' %}
+                
+                {% if filter_type == 'pdf' %}
+                    {% set icon = 'file-pdf' %}
+                    {% set color = 'red' %}
+                {% elseif filter_type == 'video' %}
+                    {% set icon = 'video' %}
+                    {% set color = 'blue' %}
+                {% elseif filter_type == 'link' %}
+                    {% set icon = 'link' %}
+                    {% set color = 'indigo' %}
+                {% endif %}
+
+                <div class="resource-card bg-white rounded-2xl shadow-sm border border-gray-100 p-5 hover:shadow-lg transition-all group flex flex-col h-full hover:border-{{ color }}-200" data-type="{{ filter_type }}">
+                    <div class="flex items-start gap-4 mb-3">
+                         <div class="flex-shrink-0 w-12 h-12 rounded-xl bg-{{ color }}-50 flex items-center justify-center text-{{ color }}-500 text-xl group-hover:scale-110 transition-transform">
+                            <i class="fas fa-{{ icon }}"></i>
+                        </div>
+                        <div>
+                             <h4 class="font-bold text-gray-900 group-hover:text-{{ color }}-600 transition-colors line-clamp-1" title="{{ resource.title }}">
+                                {{ resource.title }}
+                             </h4>
+                             <p class="text-xs text-gray-500 mt-1 line-clamp-1">
+                                <span class="bg-gray-100 px-1.5 py-0.5 rounded text-gray-600 uppercase text-[10px] tracking-wide mr-1">{{ resource.type }}</span>
+                                {{ resource.module.course.title }}
+                             </p>
+                        </div>
+                    </div>
+                    
+                    <div class="text-xs text-gray-400 mb-4 pl-16">
+                        Module: {{ resource.module.title }}
+                    </div>
+
+                    <div class="mt-auto">
+                        {% if filter_type == 'link' %}
+                             <a href="{{ resource.content }}" target="_blank" class="block w-full text-center py-2.5 bg-indigo-50 text-indigo-700 rounded-lg text-sm font-bold hover:bg-indigo-100 transition-all">
+                                <i class="fas fa-external-link-alt mr-2"></i> Ouvrir le lien
+                            </a>
+                        {% else %}
+                             <a href="#" class="block w-full text-center py-2.5 bg-gray-50 text-gray-700 rounded-lg text-sm font-bold hover:bg-gray-100 transition-all">
+                                <i class="fas fa-download mr-2"></i> Télécharger
+                            </a>
+                        {% endif %}
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+</div>
+
+<script>
+    function filterResources(type) {
+        // Update Buttons
+        document.querySelectorAll('.filter-btn').forEach(btn => {
+            if (btn.dataset.filter === type) {
+                btn.classList.add('bg-emerald-100', 'text-emerald-800');
+                btn.classList.remove('text-gray-600', 'hover:bg-gray-100');
+            } else {
+                btn.classList.remove('bg-emerald-100', 'text-emerald-800');
+                btn.classList.add('text-gray-600', 'hover:bg-gray-100');
+            }
+        });
+
+        // Loop cards
+        const cards = document.querySelectorAll('.resource-card');
+        cards.forEach(card => {
+            if (type === 'all' || card.dataset.type === type) {
+                card.style.display = 'flex';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+</script>
+{% endblock %}

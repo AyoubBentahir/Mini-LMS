@@ -1,0 +1,98 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Modules{% endblock %}
+
+{% block body %}
+<!-- HEADER -->
+<div class="bg-indigo-900 text-white pt-10 pb-20 px-4 md:px-8 shadow-lg relative overflow-hidden">
+     <!-- Decorative Background -->
+    <div class="absolute top-0 right-0 w-64 h-64 bg-white opacity-5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
+    <div class="absolute bottom-0 left-0 w-48 h-48 bg-indigo-500 opacity-20 rounded-full -ml-16 -mb-16 blur-2xl"></div>
+
+    <div class="max-w-7xl mx-auto relative z-10">
+        <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-bold mb-2">Mes Modules</h1>
+                <p class="text-indigo-200 text-lg">Parcourez vos modules organisés par cours.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CONTENT -->
+<div class="max-w-7xl mx-auto px-4 md:px-8 -mt-12 relative z-20 pb-12 space-y-12">
+    {% if enrollments is empty %}
+        <div class="bg-white rounded-2xl shadow-sm p-12 text-center border border-gray-100">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-300">
+                <i class="fas fa-layer-group text-3xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Aucun cours trouvé</h3>
+            <p class="text-gray-500 mb-6">Inscrivez-vous à des cours pour voir apparaître vos modules ici.</p>
+
+        </div>
+    {% else %}
+        {% for enrollment in enrollments %}
+            {% set course = enrollment.course %}
+            
+            <section class="bg-white rounded-3xl shadow-sm border border-gray-100 overflow-hidden">
+                <!-- Course Header -->
+                <div class="p-6 md:p-8 border-b border-gray-100 bg-gray-50/50 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="flex items-center gap-3 mb-2">
+                             <h2 class="text-2xl font-bold text-gray-900">
+                                <a href="{{ path('app_student_course_view', {'id': course.id}) }}" class="hover:text-indigo-600 transition-colors">
+                                    {{ course.title }}
+                                </a>
+                            </h2>
+                            <span class="px-2.5 py-0.5 rounded-full bg-indigo-100 text-indigo-700 text-xs font-bold uppercase">
+                                {{ course.category|default('Cours') }}
+                            </span>
+                        </div>
+                        <p class="text-gray-500 text-sm line-clamp-1 max-w-2xl">{{ course.description }}</p>
+                    </div>
+                    <a href="{{ path('app_student_course_view', {'id': course.id}) }}" class="flex-shrink-0 inline-flex items-center px-4 py-2 bg-indigo-600 hover:bg-indigo-700 text-white text-sm font-medium rounded-xl transition-colors shadow-sm">
+                        Continuer <i class="fas fa-arrow-right ml-2"></i>
+                    </a>
+                </div>
+
+                <!-- Modules Grid -->
+                <div class="p-6 md:p-8">
+                     <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {% for module in course.modules %}
+                            <div class="group relative bg-white border border-gray-100 rounded-2xl p-5 hover:border-indigo-200 hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
+                                <div class="flex justify-between items-start mb-4">
+                                    <div class="w-10 h-10 rounded-full bg-indigo-50 flex items-center justify-center text-indigo-600 font-bold text-sm">
+                                        {{ loop.index }}
+                                    </div>
+                                    <div class="text-xs font-medium text-gray-400 bg-gray-50 px-2 py-1 rounded-md">
+                                        {{ module.resources|length }} Ressources
+                                    </div>
+                                </div>
+                                
+                                <h3 class="font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors text-lg">
+                                    <a href="{{ path('app_student_course_view', {'id': course.id}) }}" class="focus:outline-none">
+                                        <span class="absolute inset-0"></span>
+                                        {{ module.title }}
+                                    </a>
+                                </h3>
+                                
+                                <p class="text-sm text-gray-500 mb-4 line-clamp-2">
+                                     Accédez à ce module pour voir le contenu complet et les ressources.
+                                </p>
+
+                                <div class="flex items-center text-indigo-600 text-sm font-bold opacity-0 group-hover:opacity-100 transition-opacity transform translate-y-2 group-hover:translate-y-0">
+                                    Voir le module <i class="fas fa-chevron-right ml-1"></i>
+                                </div>
+                            </div>
+                        {% else %}
+                            <div class="col-span-full py-8 text-center text-gray-400 italic">
+                                Aucun module dans ce cours pour l'instant.
+                            </div>
+                        {% endfor %}
+                     </div>
+                </div>
+            </section>
+        {% endfor %}
+    {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,94 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Créer une nouvelle ressource{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="form-page-header">
+        <div class="header-breadcrumb">
+            {% if module_id %}
+                <a href="{{ path('app_module_show', {'id': module_id}) }}" class="breadcrumb-link">
+                    <i class="fas fa-arrow-left"></i> Retour au module
+                </a>
+            {% else %}
+                <a href="{{ path('app_module_index') }}" class="breadcrumb-link">
+                    <i class="fas fa-arrow-left"></i> Retour aux modules
+                </a>
+            {% endif %}
+        </div>
+        
+        <div class="form-title-section">
+            <div class="form-icon-wrapper create">
+                <i class="fas fa-file-plus"></i>
+            </div>
+            <div>
+                <h1>Créer une nouvelle ressource</h1>
+                <p class="form-subtitle">Ajoutez une ressource pédagogique à vos modules</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-container">
+        <div class="form-main-card">
+            {{ form_start(form, {'attr': {'class': 'premium-form', 'enctype': 'multipart/form-data'}}) }}
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-info-circle"></i> Informations générales
+                    </h3>
+                    
+                    <div class="form-group">
+                        {{ form_label(form.title, 'Titre de la ressource', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.title, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Support de cours Chapitre 1'}}) }}
+                        {{ form_errors(form.title) }}
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.module, 'Module associé', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.module, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.module) }}
+                        <span class="form-help">Sélectionnez le module auquel cette ressource sera rattachée</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.type, 'Type de ressource', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.type, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.type) }}
+                        <span class="form-help">Choisissez le type de contenu que vous souhaitez ajouter</span>
+                    </div>
+                </div>
+
+                <div class="form-section">
+                    <h3 class="form-section-title">
+                        <i class="fas fa-upload"></i> Contenu de la ressource
+                    </h3>
+
+                    <div class="form-group">
+                        {{ form_label(form.file, 'Fichier (PDF, DOCX, Image)', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.file, {'attr': {'class': 'form-file'}}) }}
+                        {{ form_errors(form.file) }}
+                        <span class="form-help">📁 Sélectionnez un fichier à uploader (max 10 Mo)</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.content, 'OU Lien/Texte', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.content, {'attr': {'class': 'form-textarea', 'placeholder': 'Exemple: https://example.com/document.pdf', 'rows': '3'}}) }}
+                        {{ form_errors(form.content) }}
+                        <span class="form-help">⚠️ Utilisez ce champ uniquement si vous n'uploadez PAS de fichier ci-dessus</span>
+                    </div>
+                </div>
+
+                {{ form_rest(form) }}
+
+                <div class="form-actions">
+                    <a href="{{ path('app_module_index') }}" class="btn-form-cancel">
+                        <i class="fas fa-times"></i> Annuler
+                    </a>
+                    <button type="submit" class="btn-form-submit">
+                        <i class="fas fa-check"></i> Créer la ressource
+                    </button>
+                </div>
+            {{ form_end(form) }}
+        </div>
+    </div>
+</main>
+{% endblock %}

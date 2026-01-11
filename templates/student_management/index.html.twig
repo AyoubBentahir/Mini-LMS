@@ -1,0 +1,65 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Étudiants{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="page-header-unified">
+        <h1>Gestion des Étudiants</h1>
+        
+        <a href="{{ path('app_student_new') }}" class="btn-create-unified">
+            <i class="fas fa-plus"></i> Créer Étudiant
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="course-management-grid">
+        {% for student in students %}
+            <div class="course-manage-card">
+                <div class="course-card-header">
+                    <div class="course-icon-wrapper">
+                        <i class="fas fa-user-graduate"></i>
+                    </div>
+                    <span class="course-badge {{ student.isIsActive ? 'code' : 'design' }}">
+                        {{ student.isIsActive ? 'Actif' : 'Inactif' }}
+                    </span>
+                </div>
+
+                <h3>{{ student.prenom }} {{ student.nom }}</h3>
+                <p class="course-description">
+                    <i class="fas fa-envelope"></i> {{ student.email }}
+                </p>
+
+                <div class="course-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ student.createdAt|date('d/m/Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="course-card-actions">
+                    <a href="{{ path('app_student_show', {'id': student.id}) }}" class="btn-card-action view">
+                        <i class="fas fa-eye"></i> Voir
+                    </a>
+                    <a href="{{ path('app_student_edit', {'id': student.id}) }}" class="btn-card-action edit">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-user-graduate"></i>
+                </div>
+                <h3>Aucun étudiant</h3>
+                <p>Commencez par créer votre premier étudiant</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+{% endblock %}

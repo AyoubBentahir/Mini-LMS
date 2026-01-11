@@ -1,0 +1,182 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Cours{% endblock %}
+
+{% block body %}
+<main class="dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Header & Tools -->
+    <div class="flex flex-col md:flex-row md:items-center justify-between gap-6 mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-gray-900">Mes Cours</h1>
+            <p class="text-gray-500 mt-1">Gérez votre apprentissage et suivez votre progression.</p>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row gap-4 w-full md:w-auto">
+            <!-- Search -->
+            <div class="relative">
+                <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                <input type="text" id="courseSearch" placeholder="Rechercher un cours..." 
+                       class="w-full sm:w-64 pl-11 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all shadow-sm">
+            </div>
+            
+            <!-- Filters -->
+             <div class="bg-white p-1 rounded-xl border border-gray-200 inline-flex shadow-sm">
+                <button class="filter-btn active px-4 py-1.5 rounded-lg text-sm font-bold transition-all bg-gray-100 text-gray-900" data-status="all">Tout</button>
+                <button class="filter-btn px-4 py-1.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-gray-50 transition-all" data-status="in-progress">En cours</button>
+                <button class="filter-btn px-4 py-1.5 rounded-lg text-sm font-bold text-gray-500 hover:bg-gray-50 transition-all" data-status="completed">Terminé</button>
+            </div>
+            
+
+        </div>
+    </div>
+
+    {% if enrollments|length > 0 %}
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="coursesGrid">
+            {% for enrollment in enrollments %}
+                {% set course = enrollment.course %}
+                {% set title_lower = course.title|lower %}
+                {% set percent = progress[course.id]|default(0) %}
+                {% set is_completed = percent >= 100 %}
+                
+                {# Smart Icon Detection #}
+                {% if 'math' in title_lower %} {% set icon = 'calculator' %} {% set badge_color = 'blue' %}
+                {% elseif 'code' in title_lower or 'dev' in title_lower or 'sym' in title_lower or 'php' in title_lower or 'java' in title_lower or 'c++' in title_lower or 'c#' in title_lower or 'python' in title_lower or 'sql' in title_lower or 'web' in title_lower or 'html' in title_lower or 'css' in title_lower or 'js' in title_lower %} {% set icon = 'code' %} {% set badge_color = 'indigo' %}
+                {% elseif 'design' in title_lower or 'art' in title_lower or 'adobe' in title_lower %} {% set icon = 'palette' %} {% set badge_color = 'pink' %}
+                {% elseif 'data' in title_lower or 'analy' in title_lower %} {% set icon = 'database' %} {% set badge_color = 'emerald' %}
+                {% else %} {% set icon = 'book-open' %} {% set badge_color = 'violet' %}
+                {% endif %}
+
+                <article class="course-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col h-full group transform hover:-translate-y-1"
+                         data-title="{{ course.title|lower }}"
+                         data-status="{{ is_completed ? 'completed' : 'in-progress' }}">
+                    
+                    <div class="h-44 bg-gradient-to-br from-{{ badge_color }}-50 to-white relative flex items-center justify-center overflow-hidden">
+                         <div class="absolute w-64 h-64 bg-{{ badge_color }}-100/50 rounded-full blur-3xl -top-10 -right-10 group-hover:bg-{{ badge_color }}-200/50 transition-colors duration-500"></div>
+                         
+                         <i class="fas fa-{{ icon }} text-7xl text-{{ badge_color }}-300 group-hover:text-{{ badge_color }}-400 transition-colors transform group-hover:scale-110 duration-500 relative z-10 drop-shadow-sm"></i>
+                        <div class="absolute top-4 right-4 z-20">
+                            {% if is_completed %}
+                                <span class="px-3 py-1 bg-green-100 text-green-700 text-xs font-bold rounded-full uppercase tracking-wide border border-green-200 flex items-center gap-1 shadow-sm">
+                                    <i class="fas fa-check"></i> Terminé
+                                </span>
+                            {% else %}
+                                <span class="px-3 py-1 bg-white/90 backdrop-blur-md text-{{ badge_color }}-600 text-xs font-bold rounded-full uppercase tracking-wide shadow-sm border border-{{ badge_color }}-100">
+                                    {{ course.category|default('Cours') }}
+                                </span>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <div class="p-6 flex-1 flex flex-col">
+                        <h3 class="text-xl font-bold text-gray-900 mb-2 group-hover:text-indigo-600 transition-colors line-clamp-1" title="{{ course.title }}">
+                            <a href="{{ path('app_student_course_view', {'id': course.id}) }}">{{ course.title }}</a>
+                        </h3>
+                        
+                        {# Progress Bar #}
+                        <div class="mb-4">
+                            <div class="flex justify-between text-xs mb-1">
+                                <span class="font-medium text-gray-500">Progression</span>
+                                <span class="font-bold text-{{ is_completed ? 'green-600' : 'indigo-600' }}">{{ percent|round }}%</span>
+                            </div>
+                            <div class="w-full bg-gray-100 rounded-full h-2 overflow-hidden">
+                                <div class="bg-{{ is_completed ? 'green-500' : 'indigo-600' }} h-2 rounded-full transition-all duration-1000 ease-out" style="width: {{ percent }}%"></div>
+                            </div>
+                        </div>
+
+                        <div class="mt-auto pt-4 border-t border-gray-50 flex justify-between items-center">
+                            <span class="text-xs text-gray-400 flex items-center">
+                                <i class="far fa-calendar-alt mr-1"></i> {{ enrollment.enrolledAt|date('d/m/Y') }}
+                            </span>
+                            <a href="{{ path('app_student_course_view', {'id': course.id}) }}" class="px-4 py-2 rounded-lg bg-gray-50 text-gray-700 font-bold text-sm hover:bg-{{ badge_color }}-600 hover:text-white transition-all shadow-sm">
+                                {{ is_completed ? 'Revoir' : 'Continuer' }}
+                            </a>
+                        </div>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+        
+        <!-- Empty State for filtered results -->
+        <div id="noResults" class="hidden text-center py-12">
+            <div class="w-16 h-16 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 text-gray-400">
+                <i class="fas fa-search-minus text-2xl"></i>
+            </div>
+            <p class="text-gray-500 font-medium">Aucun cours ne correspond à votre recherche.</p>
+        </div>
+
+    {% else %}
+        <div class="text-center py-16 bg-white rounded-2xl border-2 border-dashed border-gray-200">
+            <div class="w-20 h-20 bg-gray-50 rounded-full flex items-center justify-center mx-auto mb-4 animate-bounce-slow">
+                <i class="fas fa-graduation-cap text-indigo-200 text-4xl"></i>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 mb-2">Vous n'êtes inscrit à aucun cours</h3>
+            <p class="text-gray-500 max-w-md mx-auto mb-8">Explorez notre catalogue pour trouver des cours qui vous intéressent et commencez à apprendre.</p>
+
+        </div>
+    {% endif %}
+</main>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('courseSearch');
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const courseCards = document.querySelectorAll('.course-card');
+        const noResults = document.getElementById('noResults');
+
+        let currentStatus = 'all';
+        let currentSearch = '';
+
+        // Filter Logic
+        function filterCourses() {
+            let visibleCount = 0;
+
+            courseCards.forEach(card => {
+                const title = card.dataset.title;
+                const status = card.dataset.status;
+                
+                const matchesSearch = title.includes(currentSearch);
+                const matchesStatus = currentStatus === 'all' || status === currentStatus;
+
+                if (matchesSearch && matchesStatus) {
+                    card.style.display = 'flex'; // Restore flex because of card layout
+                    visibleCount++;
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+
+            // Show empty state if no results found in grid
+            if (visibleCount === 0 && courseCards.length > 0) {
+                noResults.classList.remove('hidden');
+            } else if (noResults) {
+                noResults.classList.add('hidden');
+            }
+        }
+
+        // Search Event
+        if(searchInput) {
+            searchInput.addEventListener('input', (e) => {
+                currentSearch = e.target.value.toLowerCase().trim();
+                filterCourses();
+            });
+        }
+
+        // Button Events
+        filterBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                // Update UI
+                filterBtns.forEach(b => {
+                    b.classList.remove('active', 'bg-gray-100', 'text-gray-900');
+                    b.classList.add('text-gray-500', 'hover:bg-gray-50');
+                });
+                btn.classList.add('active', 'bg-gray-100', 'text-gray-900');
+                btn.classList.remove('text-gray-500', 'hover:bg-gray-50');
+
+                // Update Logic
+                currentStatus = btn.dataset.status;
+                filterCourses();
+            });
+        });
+    });
+</script>
+{% endblock %}

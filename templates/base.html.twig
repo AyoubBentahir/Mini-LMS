@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+        <title>{% block title %}Mini-LMS | Connexion{% endblock %}</title>
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>🎓</text></svg>">
+        
+        {# FontAwesome for icons #}
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+        
+        {% block stylesheets %}
+            <script src="https://cdn.tailwindcss.com"></script>
+            <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
+        {% endblock %}
+
+        {% block javascripts %}
+            {% block importmap %}{{ importmap('app') }}{% endblock %}
+        {% endblock %}
+    </head>
+    <body>
+        {% set show_sidebar = app.user and app.request.attributes.get('_route') != 'app_login' %}
+
+        <div class="{{ show_sidebar ? 'dashboard-grid' : '' }}">
+            {% if show_sidebar %}
+                <!-- GLOBAL SIDEBAR -->
+                <aside class="sidebar">
+                    <nav class="sidebar-menu">
+                        {% if is_granted('ROLE_SUPER_ADMIN') %}
+                            {# Super Admin Menu #}
+                            <a href="{{ path('app_super_admin_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_super_admin_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                            </a>
+                            <a href="{{ path('app_user_index') }}" class="nav-item {{ 'app_user' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-user-shield"></i> <span>Administrateurs</span>
+                            </a>
+                            <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+                                <i class="fas fa-user-circle"></i> <span>Profil</span>
+                            </a>
+                        {% elseif is_granted('ROLE_ADMIN') %}
+                            {# Admin Menu #}
+                            <a href="{{ path('app_admin_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_admin_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-chart-line"></i> <span>Dashboard</span>
+                            </a>
+                            <a href="{{ path('app_teacher_index') }}" class="nav-item {{ 'app_teacher' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-chalkboard-teacher"></i> <span>Enseignants</span>
+                            </a>
+                            <a href="{{ path('app_student_index') }}" class="nav-item {{ 'app_student' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-user-graduate"></i> <span>Étudiants</span>
+                            </a>
+                            <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+                                <i class="fas fa-user-circle"></i> <span>Profil</span>
+                            </a>
+                        {% elseif is_granted('ROLE_TEACHER') %}
+                            {# Teacher Menu (Hiba's original) #}
+                            <a href="{{ path('app_teacher_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_teacher_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                            </a>
+                            <a href="{{ path('app_course_index') }}" class="nav-item {{ 'app_course' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-book"></i> <span>Mes Cours</span>
+                            </a>
+                            <a href="{{ path('app_module_index') }}" class="nav-item {{ 'app_module' in app.request.attributes.get('_route') ? 'active' : '' }}">
+                                <i class="fas fa-layer-group"></i> <span>Modules</span>
+                            </a>
+                            <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+                                <i class="fas fa-user-circle"></i> <span>Profil</span>
+                            </a>
+                        {% elseif is_granted('ROLE_STUDENT') %}
+                            {# Student Menu #}
+                            <a href="{{ path('app_student_dashboard') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_student_dashboard' ? 'active' : '' }}">
+                                <i class="fas fa-th-large"></i> <span>Dashboard</span>
+                            </a>
+                            <a href="{{ path('app_student_my_courses') }}" class="nav-item {{ 'app_student_course' in app.request.attributes.get('_route') or app.request.attributes.get('_route') == 'app_student_my_courses' ? 'active' : '' }}">
+                                <i class="fas fa-graduation-cap"></i> <span>Mes Cours</span>
+                            </a>
+                            <a href="{{ path('app_student_courses_browse') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_student_courses_browse' ? 'active' : '' }}">
+                                <i class="fas fa-book-open"></i> <span>Catalogue</span>
+                            </a>
+                            <a href="{{ path('app_student_modules') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_student_modules' ? 'active' : '' }}">
+                                <i class="fas fa-layer-group"></i> <span>Modules</span>
+                            </a>
+
+                            <a href="{{ path('app_profile') }}" class="nav-item {{ app.request.attributes.get('_route') == 'app_profile' ? 'active' : '' }}">
+                                <i class="fas fa-user-circle"></i> <span>Profil</span>
+                            </a>
+                        {% endif %}
+                    </nav>
+
+                    <div class="mt-auto">
+                        <a href="{{ path('app_logout') }}" class="nav-item text-white opacity-75">
+                            <i class="fas fa-sign-out-alt"></i> <span>Déconnexion</span>
+                        </a>
+                    </div>
+                </aside>
+            {% endif %}
+
+            <!-- Flash Messages / Toasts -->
+            <div id="toast-container" class="fixed top-4 right-4 z-50 flex flex-col gap-2">
+                {% for label, messages in app.flashes %}
+                    {% for message in messages %}
+                        <div class="toast-notification transform translate-x-full transition-all duration-300 ease-in-out flex items-center w-full max-w-xs p-4 mb-4 text-gray-500 bg-white rounded-lg shadow dark:text-gray-400 dark:bg-gray-800" role="alert">
+                            <div class="inline-flex items-center justify-center flex-shrink-0 w-8 h-8 rounded-lg {{ label == 'success' ? 'text-green-500 bg-green-100 dark:bg-green-800 dark:text-green-200' : (label == 'error' ? 'text-red-500 bg-red-100 dark:bg-red-800 dark:text-red-200' : 'text-blue-500 bg-blue-100') }}">
+                                <i class="fas {{ label == 'success' ? 'fa-check' : (label == 'error' ? 'fa-exclamation' : 'fa-info') }}"></i>
+                            </div>
+                            <div class="ml-3 text-sm font-normal">{{ message }}</div>
+                            <button type="button" class="ml-auto -mx-1.5 -my-1.5 bg-white text-gray-400 hover:text-gray-900 rounded-lg focus:ring-2 focus:ring-gray-300 p-1.5 hover:bg-gray-100 inline-flex items-center justify-center h-8 w-8 dark:text-gray-500 dark:hover:text-white dark:bg-gray-800 dark:hover:bg-gray-700" data-dismiss-target="#toast-success" aria-label="Close" onclick="this.parentElement.remove()">
+                                <span class="sr-only">Close</span>
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                    {% endfor %}
+                {% endfor %}
+            </div>
+
+            <div style="grid-column: 1 / -1;">
+                {% block body %}{% endblock %}
+            </div>
+        </div>
+
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                const toasts = document.querySelectorAll('.toast-notification');
+                toasts.forEach((toast, index) => {
+                    setTimeout(() => {
+                        toast.classList.remove('translate-x-full');
+                    }, 100 * (index + 1));
+
+                    // Auto dismiss after 5 seconds
+                    setTimeout(() => {
+                        toast.classList.add('translate-x-full', 'opacity-0');
+                        setTimeout(() => toast.remove(), 300);
+                    }, 5000);
+                });
+            });
+        </script>
+    </body>
+</html>

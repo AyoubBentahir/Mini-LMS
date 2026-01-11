@@ -1,0 +1,280 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ course.title }}{% endblock %}
+
+{% block body %}
+<!-- BREADCRUMBS -->
+<div class="bg-gray-50 border-b border-gray-100">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+        <nav class="flex text-sm font-medium text-gray-500">
+            <a href="{{ path('app_student_dashboard') }}" class="hover:text-indigo-600 transition-colors">Dashboard</a>
+            <span class="mx-2 text-gray-300">/</span>
+            <a href="{{ path('app_student_my_courses') }}" class="hover:text-indigo-600 transition-colors">Mes Cours</a>
+            <span class="mx-2 text-gray-300">/</span>
+            <span class="text-gray-900 truncate max-w-xs">{{ course.title }}</span>
+        </nav>
+    </div>
+</div>
+
+<main class="dashboard-content max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 transition-all duration-300" id="mainContent">
+    <!-- Smart Color Logic -->
+    {% set title_lower = course.title|lower %}
+    {% if 'math' in title_lower %} {% set accent = 'blue' %} {% set icon = 'calculator' %}
+    {% elseif 'code' in title_lower or 'dev' in title_lower or 'sym' in title_lower or 'php' in title_lower %} {% set accent = 'indigo' %} {% set icon = 'code' %}
+    {% elseif 'design' in title_lower %} {% set accent = 'pink' %} {% set icon = 'palette' %}
+    {% elseif 'data' in title_lower %} {% set accent = 'emerald' %} {% set icon = 'database' %}
+    {% else %} {% set accent = 'gray' %} {% set icon = 'book' %}
+    {% endif %}
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start relative">
+        <!-- LEFT COLUMN: CONTENT (Span 8 normally, 12 in focus mode) -->
+        <div class="lg:col-span-8 space-y-8 transition-all duration-300" id="courseContentArea">
+            
+            <!-- HERO HEADER -->
+            <header class="bg-white rounded-3xl shadow-sm border border-gray-100 p-8 relative overflow-hidden group">
+                <div class="absolute top-0 right-0 w-80 h-80 bg-{{ accent }}-50 rounded-full -mr-20 -mt-20 opacity-50 group-hover:scale-110 transition-transform duration-700"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex flex-wrap items-center gap-3 mb-6">
+                        <span class="px-3 py-1 bg-{{ accent }}-100 text-{{ accent }}-700 text-xs font-bold rounded-full uppercase tracking-wide border border-{{ accent }}-200">
+                            {{ course.category|default('Cours') }}
+                        </span>
+                        {% if is_enrolled %}
+                            <span class="flex items-center text-emerald-600 text-xs font-bold bg-emerald-50 px-3 py-1 rounded-full border border-emerald-100">
+                                <i class="fas fa-check-circle mr-2"></i> Inscrit
+                            </span>
+                        {% endif %}
+                        
+                        <!-- Focus Mode Buttons -->
+                        <button onclick="toggleFocusMode()" class="ml-auto text-gray-400 hover:text-indigo-600 transition-colors" title="Mode Focus">
+                            <i class="fas fa-expand-alt" id="focusIcon"></i>
+                        </button>
+                    </div>
+
+                    <div class="flex items-start gap-6">
+                        <div class="hidden sm:flex w-20 h-20 rounded-2xl bg-gradient-to-br from-{{ accent }}-500 to-{{ accent }}-600 items-center justify-center shadow-lg text-white transform -rotate-3 text-3xl flex-shrink-0">
+                            <i class="fas fa-{{ icon }}"></i>
+                        </div>
+                        <div>
+                            <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 mb-3 leading-tight">{{ course.title }}</h1>
+                            <p class="text-gray-600 leading-relaxed mb-4 max-w-2xl text-sm sm:text-base">
+                                {{ course.description }}
+                            </p>
+                            <div class="flex items-center gap-6 text-sm text-gray-500 font-medium">
+                                <span class="flex items-center"><i class="fas fa-layer-group mr-2 text-{{ accent }}-500"></i> {{ modules|length }} modules</span>
+                                <span class="flex items-center"><i class="fas fa-user-tie mr-2 text-{{ accent }}-500"></i> {{ course.teacher.prenom }} {{ course.teacher.nom }}</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- MODULES LIST -->
+            <div id="modulesList">
+                <div class="flex items-center justify-between mb-6">
+                    <h2 class="text-2xl font-bold text-gray-900">Programme</h2>
+                    <button class="text-sm font-medium text-indigo-600 hover:text-indigo-700" onclick="expandAllModules()">
+                        Tout développer
+                    </button>
+                </div>
+
+                <div class="space-y-4">
+                    {% for module in modules %}
+                        {% set is_completed = module.id in completed_modules|default([]) %} 
+                        
+                        <div class="module-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden transition-all duration-300 {{ is_completed ? 'border-l-4 border-l-emerald-500' : '' }}">
+                            <!-- Module Header (Clickable for accordion if needed, for now just clean) -->
+                            <div class="p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white hover:bg-gray-50 transition-colors cursor-pointer group" onclick="toggleModuleContent(this)">
+                                <div class="flex items-center gap-4">
+                                     <!-- Checkbox/Status -->
+                                    {% if is_enrolled %}
+                                        <form action="{{ path('app_student_module_toggle_completion', {'id': module.id}) }}" method="post" onclick="event.stopPropagation()">
+                                            <button type="submit" class="w-8 h-8 rounded-full border-2 {{ is_completed ? 'bg-emerald-500 border-emerald-500 text-white' : 'border-gray-200 text-gray-300 hover:border-indigo-500 hover:text-indigo-500' }} flex items-center justify-center transition-all focus:outline-none">
+                                                <i class="fas fa-check text-xs"></i>
+                                            </button>
+                                        </form>
+                                    {% else %}
+                                        <div class="w-8 h-8 rounded-full border-2 border-gray-200 bg-gray-50 flex items-center justify-center text-gray-300">
+                                            <i class="fas fa-lock text-xs"></i>
+                                        </div>
+                                    {% endif %}
+
+                                    <div>
+                                        <h3 class="font-bold text-lg text-gray-800 group-hover:text-{{ accent }}-600 transition-colors">
+                                           {{ module.title }}
+                                        </h3>
+                                        <p class="text-xs text-gray-500">{{ module.resources|length }} ressources</p>
+                                    </div>
+                                </div>
+                                
+                                <i class="fas fa-chevron-down text-gray-400 transform transition-transform duration-300 group-hover:text-gray-600 module-chevron"></i>
+                            </div>
+                            
+                            <!-- Module Content (Hidden by default or shown?) Let's show by default but enable toggle -->
+                            <div class="module-content hidden border-t border-gray-50 bg-gray-50/30">
+                                {% if is_enrolled %}
+                                    <div class="p-2 space-y-1">
+                                        {% for resource in module.resources %}
+                                            {% set r_icon = 'file' %}
+                                            {% set r_color = 'gray' %}
+                                            {% set r_bg = 'gray' %}
+
+                                            {% if resource.type == 'video' %} {% set r_icon = 'play-circle' %} {% set r_color = 'indigo' %} {% set r_bg = 'indigo' %}
+                                            {% elseif resource.type == 'pdf' %} {% set r_icon = 'file-pdf' %} {% set r_color = 'red' %} {% set r_bg = 'red' %}
+                                            {% elseif resource.type == 'link' %} {% set r_icon = 'link' %} {% set r_color = 'purple' %} {% set r_bg = 'purple' %}
+                                            {% endif %}
+
+                                            <div class="p-3 rounded-xl hover:bg-white hover:shadow-sm flex items-center justify-between group transition-all mx-2">
+                                                <div class="flex items-center gap-3 overflow-hidden">
+                                                    <div class="w-10 h-10 rounded-lg bg-{{ r_bg }}-50 text-{{ r_color }}-500 flex flex-shrink-0 items-center justify-center text-lg">
+                                                        <i class="fas fa-{{ r_icon }}"></i>
+                                                    </div>
+                                                    <div class="min-w-0">
+                                                        <h4 class="text-sm font-medium text-gray-700 truncate group-hover:text-{{ accent }}-600 transition-colors">{{ resource.title }}</h4>
+                                                        <p class="text-[10px] text-gray-400 uppercase tracking-wider">{{ resource.type }}</p>
+                                                    </div>
+                                                </div>
+                                                
+                                                <div>
+                                                    {% if resource.type == 'link' %}
+                                                        <a href="{{ resource.content }}" target="_blank" class="text-gray-400 hover:text-{{ accent }}-600 p-2">
+                                                            <i class="fas fa-external-link-alt"></i>
+                                                        </a>
+                                                    {% elseif resource.content %}
+                                                         <a href="{{ resource.content }}" target="_blank" class="text-gray-400 hover:text-{{ accent }}-600 p-2">
+                                                            <i class="fas fa-download"></i>
+                                                        </a>
+                                                    {% endif %}
+                                                </div>
+                                            </div>
+                                        {% else %}
+                                            <div class="p-4 text-center text-gray-400 italic text-sm">Aucune ressource pour l'instant.</div>
+                                        {% endfor %}
+                                    </div>
+                                {% else %}
+                                     <div class="p-8 text-center">
+                                        <i class="fas fa-lock text-gray-300 text-2xl mb-2"></i>
+                                        <p class="text-sm text-gray-500">Contenu réservé aux membres inscrits.</p>
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="text-center py-8 bg-white rounded-2xl border border-dashed border-gray-200">
+                           <p class="text-gray-400">Le programme n'a pas encore été défini.</p>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- RIGHT COLUMN: SIDEBAR (Sticky) -->
+        <div class="lg:col-span-4 space-y-6 lg:sticky lg:top-8 transition-all duration-300" id="courseSidebar">
+             {% if is_enrolled %}
+                <!-- Progress Card -->
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                    <h3 class="font-bold text-gray-900 mb-4 flex items-center">
+                        <i class="fas fa-chart-pie mr-2 text-{{ accent }}-500"></i> Votre Progression
+                    </h3>
+                    
+                    <div class="flex items-end justify-between mb-2">
+                        <span class="text-3xl font-bold text-{{ accent }}-600">{{ progress|default(0)|round }}%</span>
+                        <span class="text-sm text-gray-500 font-medium mb-1">complété</span>
+                    </div>
+                    
+                    <div class="w-full bg-gray-100 rounded-full h-3 mb-6 overflow-hidden">
+                        <div class="bg-gradient-to-r from-{{ accent }}-500 to-{{ accent }}-600 h-3 rounded-full transition-all duration-1000 ease-out shadow-sm" style="width: {{ progress }}%"></div>
+                    </div>
+                    
+                    <p class="text-xs text-gray-400 text-center">
+                        Vous avez terminé {{ completed_modules|length }} sur {{ modules|length }} modules.
+                    </p>
+                </div>
+            {% else %}
+                <!-- Enrollment Card -->
+                <div class="bg-white p-6 rounded-2xl shadow-lg border border-indigo-100 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 w-32 h-32 bg-indigo-50 rounded-full -mr-16 -mt-16 opacity-50"></div>
+                     <h3 class="font-bold text-gray-900 mb-2 relative z-10">Ce cours vous intéresse ?</h3>
+                     <p class="text-sm text-gray-500 mb-6 relative z-10">Débloquez l'accès immédiat à tous les modules et ressources.</p>
+                     
+                     <form action="{{ path('app_student_course_enroll', {'id': course.id}) }}" method="post">
+                        <button type="submit" class="w-full py-3.5 bg-gray-900 hover:bg-black text-white font-bold rounded-xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-1 flex items-center justify-center">
+                            Rejoindre Gratuitement
+                        </button>
+                    </form>
+                </div>
+            {% endif %}
+
+            <!-- Teacher Info -->
+             <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+                <div class="flex items-center gap-4">
+                    <div class="w-12 h-12 rounded-full bg-gray-100 flex items-center justify-center font-bold text-gray-600 border-2 border-white shadow-sm">
+                         {{ course.teacher.prenom|first }}{{ course.teacher.nom|first }}
+                    </div>
+                    <div>
+                        <p class="text-xs text-gray-400 uppercase font-bold tracking-wider">Instructeur</p>
+                        <p class="font-bold text-gray-900 hover:text-indigo-600 transition-colors cursor-pointer">{{ course.teacher.prenom }} {{ course.teacher.nom }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<script>
+    // Module Accordion Logic
+    function toggleModuleContent(header) {
+        const content = header.nextElementSibling;
+        const chevron = header.querySelector('.module-chevron');
+        
+        content.classList.toggle('hidden');
+        if(content.classList.contains('hidden')) {
+            chevron.classList.remove('rotate-180');
+        } else {
+            chevron.classList.add('rotate-180');
+        }
+    }
+
+    function expandAllModules() {
+        document.querySelectorAll('.module-content').forEach(el => el.classList.remove('hidden'));
+        document.querySelectorAll('.module-chevron').forEach(el => el.classList.add('rotate-180'));
+    }
+    
+    // Open first module and active modules by default
+    document.addEventListener('DOMContentLoaded', () => {
+        const firstModule = document.querySelector('.module-content');
+        if(firstModule) {
+            firstModule.classList.remove('hidden');
+            const chevron = firstModule.previousElementSibling.querySelector('.module-chevron');
+            if(chevron) chevron.classList.add('rotate-180');
+        }
+    });
+
+    // Focus Mode Logic
+    let isFocusMode = false;
+    function toggleFocusMode() {
+        isFocusMode = !isFocusMode;
+        
+        const mainContent = document.getElementById('mainContent');
+        const courseSidebar = document.getElementById('courseSidebar');
+        const courseContentArea = document.getElementById('courseContentArea');
+        const focusIcon = document.getElementById('focusIcon');
+
+        if(isFocusMode) {
+            // Enter Focus
+            courseSidebar.classList.add('hidden');
+            courseContentArea.classList.remove('lg:col-span-8');
+            courseContentArea.classList.add('lg:col-span-12', 'max-w-4xl', 'mx-auto');
+            focusIcon.classList.remove('fa-expand-alt');
+            focusIcon.classList.add('fa-compress-alt');
+        } else {
+            // Exit Focus
+            courseSidebar.classList.remove('hidden');
+            courseContentArea.classList.add('lg:col-span-8');
+            courseContentArea.classList.remove('lg:col-span-12', 'max-w-4xl', 'mx-auto');
+            focusIcon.classList.add('fa-expand-alt');
+            focusIcon.classList.remove('fa-compress-alt');
+        }
+    }
+</script>
+{% endblock %}

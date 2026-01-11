@@ -1,0 +1,189 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier Étudiant{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="page-header-unified">
+        <h1>Modifier l'Étudiant</h1>
+        
+        <a href="{{ path('app_student_index') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="form-card">
+        {{ form_start(form) }}
+            <div class="form-grid">
+                {{ form_row(form.email) }}
+                {{ form_row(form.nom) }}
+                {{ form_row(form.prenom) }}
+                {{ form_row(form.password) }}
+                {{ form_row(form.isActive) }}
+            </div>
+
+            <div class="form-actions">
+                <button type="submit" class="btn-create-unified">
+                    <i class="fas fa-save"></i> Enregistrer
+                </button>
+                <a href="{{ path('app_student_index') }}" class="btn-cancel">
+                    <i class="fas fa-times"></i> Annuler
+                </a>
+            </div>
+        {{ form_end(form) }}
+
+        <div class="delete-section">
+            <h3>Actions</h3>
+            <form method="post" action="{{ path('app_student_toggle_status', {'id': student.id}) }}" onsubmit="return confirm('Êtes-vous sûr de vouloir {{ student.isIsActive ? 'désactiver' : 'activer' }} cet étudiant?');">
+                <button type="submit" class="btn-toggle-status {{ student.isIsActive ? 'deactivate' : 'activate' }}">
+                    <i class="fas fa-{{ student.isIsActive ? 'ban' : 'check' }}"></i> 
+                    {{ student.isIsActive ? 'Désactiver' : 'Activer' }} le compte
+                </button>
+            </form>
+        </div>
+    </div>
+</main>
+
+<style>
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+.alert i {
+    font-size: 1.25rem;
+}
+
+.form-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-width: 800px;
+}
+
+.form-grid {
+    display: grid;
+    gap: 1.5rem;
+}
+
+.form-grid > div {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-grid label {
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.9rem;
+}
+
+.form-grid input[type="text"],
+.form-grid input[type="email"],
+.form-grid input[type="password"] {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-grid input:focus {
+    outline: none;
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.form-grid input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+}
+
+.form-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--background);
+}
+
+.btn-cancel {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--background);
+    color: var(--text-dark);
+    border-radius: 12px;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.btn-cancel:hover {
+    background: #e2e8f0;
+}
+
+.delete-section {
+    margin-top: 2rem;
+    padding-top: 2rem;
+    border-top: 2px solid var(--background);
+}
+
+.delete-section h3 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+.btn-toggle-status {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.btn-toggle-status.deactivate {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+.btn-toggle-status.deactivate:hover {
+    background: #fecaca;
+}
+
+.btn-toggle-status.activate {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.btn-toggle-status.activate:hover {
+    background: #a7f3d0;
+}
+</style>
+{% endblock %}

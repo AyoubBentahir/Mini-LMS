@@ -1,0 +1,225 @@
+/* Dashboard Widgets & Content */
+.welcome-banner {
+    background: white;
+    padding: 30px 40px;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+    margin-bottom: 45px;
+    border: 1px solid #edf2f7;
+    width: 100%;
+}
+
+.welcome-banner h1 {
+    font-size: 1.8rem;
+    font-weight: 600;
+    color: #1a202c;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+}
+
+.welcome-banner p {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin: 0;
+}
+
+.welcome-banner .quote-text {
+    font-style: italic;
+    font-size: 1.05rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.stats-horizontal {
+    display: flex;
+    gap: 30px;
+    margin-bottom: 70px;
+}
+
+.stat-block {
+    flex: 1;
+    padding: 45px 30px;
+    border-radius: 28px;
+    text-align: center;
+    transition: transform 0.3s, box-shadow 0.3s;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+}
+
+.stat-block:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
+}
+
+.stat-block.blue {
+    background-color: #eff6ff;
+}
+
+.stat-block.green {
+    background-color: #f0fdf4;
+}
+
+.stat-block.purple {
+    background-color: #f5f3ff;
+}
+
+.stat-block .value {
+    display: block;
+    font-size: 2.8rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 8px;
+}
+
+.stat-block .label {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.section-header h2 {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+/* Info Panel (Right) */
+.info-panel {
+    background: white;
+    border-left: 1px solid #edf2f7;
+    padding: 40px 25px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100vh;
+    width: var(--info-panel-width);
+    overflow-y: auto;
+    z-index: 100;
+}
+
+.profile-top {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-bottom: 40px;
+}
+
+.profile-info-text {
+    text-align: right;
+    margin-right: 15px;
+}
+
+.profile-info-text h4 {
+    font-size: 0.95rem;
+    font-weight: 600;
+    margin: 0;
+    text-transform: uppercase;
+}
+
+.profile-info-text span {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+}
+
+.profile-avatar-small {
+    width: 45px;
+    height: 45px;
+    border-radius: 12px;
+}
+
+/* Static Calendar Mockup */
+.calendar-mock {
+    background: #f1f5f9;
+    border-radius: 24px;
+    padding: 30px 25px;
+    margin-bottom: 45px;
+    border: 1px solid #e2e8f0;
+}
+
+.calendar-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    text-align: center;
+    font-size: 0.75rem;
+}
+
+.day-cell {
+    padding: 5px;
+    color: var(--text-muted);
+}
+
+.day-cell.active {
+    background: var(--premium-indigo);
+    color: white;
+    border-radius: 8px;
+}
+
+.day-cell.empty {
+    visibility: hidden;
+}
+
+.online-users h4 {
+    font-size: 0.9rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.user-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.user-avatar {
+    width: 35px;
+    height: 35px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+
+.user-name {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+/* Responsive Design pour Info Panel */
+@media (max-width: 1200px) {
+    .info-panel {
+        display: none;
+    }
+}
+
+body:has(.welcome-banner) .dashboard-grid {
+    grid-template-columns: 1fr var(--info-panel-width) !important;
+}
+
+@media (max-width: 1200px) {
+    body:has(.welcome-banner) .dashboard-grid {
+        grid-template-columns: 1fr !important;
+    }
+}
+
+@media (max-width: 768px) {
+    .stats-horizontal {
+        flex-direction: column;
+        gap: 20px;
+    }
+    
+    .welcome-banner {
+        padding: 20px 25px;
+    }
+    
+    .welcome-banner h1 {
+        font-size: 1.5rem;
+    }
+}

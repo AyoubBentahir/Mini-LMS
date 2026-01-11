@@ -1,0 +1,92 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Tableau de Bord Administrateur{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="page-header-unified">
+        <h1>Tableau de Bord Administrateur</h1>
+    </div>
+
+    {# Statistics Cards #}
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div class="stat-icon teachers">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total_teachers }}</h3>
+                <p>Enseignants Total</p>
+                <div class="stat-details">
+                    <span class="active"><i class="fas fa-check-circle"></i> {{ stats.active_teachers }} Actifs</span>
+                    <span class="inactive"><i class="fas fa-times-circle"></i> {{ stats.inactive_teachers }} Inactifs</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="stat-card">
+            <div class="stat-icon students">
+                <i class="fas fa-user-graduate"></i>
+            </div>
+            <div class="stat-content">
+                <h3>{{ stats.total_students }}</h3>
+                <p>Étudiants Total</p>
+                <div class="stat-details">
+                    <span class="active"><i class="fas fa-check-circle"></i> {{ stats.active_students }} Actifs</span>
+                    <span class="inactive"><i class="fas fa-times-circle"></i> {{ stats.inactive_students }} Inactifs</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {# Recent Enrollments #}
+    <div class="recent-section">
+        <h2><i class="fas fa-clock"></i> Dernières Inscriptions</h2>
+        <table class="recent-table">
+            <thead>
+                <tr>
+                    <th>Étudiant</th>
+                    <th>Cours</th>
+                    <th>Date d'inscription</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in recent_enrollments %}
+                <tr>
+                    <td>{{ enrollment.user.prenom }} {{ enrollment.user.nom }}</td>
+                    <td>{{ enrollment.course.title }}</td>
+                    <td>{{ enrollment.enrolledAt|date('d/m/Y H:i') }}</td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="3" style="text-align: center;">Aucune inscription récente</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</main>
+
+<style>
+.stat-details {
+    display: flex;
+    gap: 1rem;
+    margin-top: 0.75rem;
+    font-size: 0.85rem;
+}
+
+.stat-details span {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.stat-details .active {
+    color: #10b981;
+}
+
+.stat-details .inactive {
+    color: #ef4444;
+}
+</style>
+{% endblock %}

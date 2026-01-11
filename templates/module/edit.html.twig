@@ -1,0 +1,97 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier le Module{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="form-page-header">
+        <div class="header-breadcrumb">
+            <a href="{{ path('app_module_show', {'id': module.id}) }}" class="breadcrumb-link">
+                <i class="fas fa-arrow-left"></i> Retour au module
+            </a>
+        </div>
+        
+        <div class="form-title-section">
+            <div class="form-icon-wrapper">
+                <i class="fas fa-layer-group"></i>
+            </div>
+            <div>
+                <h1>Modifier le module</h1>
+                <p class="form-subtitle">Mettez à jour les informations de votre module</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-layout-grid">
+        <div class="form-main-content">
+            <div class="form-card">
+                {{ form_start(form) }}
+                    <div class="form-group">
+                        {{ form_label(form.title, 'Titre du module', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.title, {'attr': {'class': 'form-input', 'placeholder': 'Ex: Introduction aux bases'}}) }}
+                        {{ form_errors(form.title) }}
+                        <span class="form-help">Choisissez un titre clair et descriptif pour votre module</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.orderIndex, 'Ordre d\'affichage', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.orderIndex, {'attr': {'class': 'form-input', 'placeholder': '1'}}) }}
+                        {{ form_errors(form.orderIndex) }}
+                        <span class="form-help">Définissez l'ordre d'apparition du module dans le cours</span>
+                    </div>
+
+                    <div class="form-group">
+                        {{ form_label(form.course, 'Cours associé', {'label_attr': {'class': 'form-label'}}) }}
+                        {{ form_widget(form.course, {'attr': {'class': 'form-select'}}) }}
+                        {{ form_errors(form.course) }}
+                        <span class="form-help">Sélectionnez le cours auquel ce module appartient</span>
+                    </div>
+
+                    <div class="form-actions">
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-check"></i> Enregistrer les modifications
+                        </button>
+                        <a href="{{ path('app_module_show', {'id': module.id}) }}" class="btn-cancel">
+                            Annuler
+                        </a>
+                    </div>
+                {{ form_end(form) }}
+            </div>
+        </div>
+
+        <div class="form-sidebar">
+            <div class="sidebar-card tips-card">
+                <div class="sidebar-card-icon">
+                    <i class="fas fa-lightbulb"></i>
+                </div>
+                <h3>Conseils</h3>
+                <ul class="tips-list">
+                    <li>Utilisez des titres clairs et concis</li>
+                    <li>Organisez vos modules de manière logique</li>
+                    <li>Numérotez vos modules pour faciliter la navigation</li>
+                    <li>Vérifiez que le cours associé est correct</li>
+                </ul>
+            </div>
+
+            <div class="sidebar-card danger">
+                <h3><i class="fas fa-exclamation-triangle"></i> Zone de danger</h3>
+                <p class="danger-text">La suppression de ce module est irréversible et supprimera toutes les ressources associées.</p>
+                <button type="button" class="btn-danger-action" onclick="document.getElementById('deleteModal').style.display='flex'">
+                    <i class="fas fa-trash"></i> Supprimer le module
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Modal -->
+    <div id="deleteModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; align-items: center; justify-content: center;" onclick="if(event.target === this) this.style.display='none'">
+        <div style="background: white; padding: 40px; border-radius: 20px; max-width: 500px; text-align: center;">
+            <i class="fas fa-exclamation-triangle" style="font-size: 3rem; color: #dc2626; margin-bottom: 20px;"></i>
+            <h2 style="margin-bottom: 15px; color: #1e293b;">Confirmer la suppression</h2>
+            <p style="color: #64748b; margin-bottom: 30px;">Êtes-vous sûr de vouloir supprimer ce module ? Cette action est irréversible.</p>
+            {{ include('module/_delete_form.html.twig') }}
+            <button onclick="document.getElementById('deleteModal').style.display='none'" style="margin-left: 10px; padding: 12px 24px; background: white; border: 1px solid #e2e8f0; border-radius: 30px; font-weight: 600; cursor: pointer;">Annuler</button>
+        </div>
+    </div>
+</main>
+{% endblock %}

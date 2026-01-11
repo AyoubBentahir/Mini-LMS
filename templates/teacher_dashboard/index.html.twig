@@ -1,0 +1,299 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mini-LMS | Tableau de Bord Enseignant{% endblock %}
+
+{% block body %}
+    <div class="dashboard-layout-wrapper" style="display: grid; grid-template-columns: 1fr 340px; gap: 30px; align-items: start; height: 100%;">
+        <!-- 1. MAIN CONTENT AREA -->
+        <main class="main-area" style="min-width: 0;">
+            <!-- Welcome Banner (Restored) -->
+            <div class="welcome-banner">
+                <h1>BIENVENUE, PROF. {{ app.user.prenom|upper }} {{ app.user.nom|upper }}</h1>
+                <p class="quote-text">"L'enseignement, c'est allumer un feu et non remplir un vase." - <br> Aristophane</p>
+            </div>
+
+            <!-- Horizontal Stats Refined -->
+            <div class="stats-horizontal">
+                <div class="stat-block blue">
+                    <span class="value">{{ courseCount }}</span>
+                    <span class="label">Cours actifs</span>
+                </div>
+                <div class="stat-block green">
+                    <span class="value">{{ studentCount }}</span>
+                    <span class="label">Étudiants</span>
+                </div>
+                <div class="stat-block purple">
+                    <span class="value">{{ resourceCount }}</span>
+                    <span class="label">Ressources</span>
+                </div>
+            </div>
+
+            <div class="section-header mb-5">
+                <h2 class="mb-0">Mes Cours</h2>
+            </div>
+
+            <!-- Courses Stack -->
+            <div class="courses-stack">
+                {% if courses is empty %}
+                    <div class="text-center py-5 bg-white rounded-4 shadow-sm border">
+                        <i class="fas fa-book-open fa-3x text-light mb-3"></i>
+                        <p class="text-muted">Vous n'avez pas encore créé de cours.</p>
+                    </div>
+                {% else %}
+                    {% for course in courses %}
+                        <div class="course-card-premium">
+                            <div class="course-illustration">
+                                {% set title = course.title|lower %}
+                                {% set icon = 'book' %}
+                                {% if 'math' in title or 'calcul' in title %}
+                                    {% set icon = 'calculator' %}
+                                {% elseif 'php' in title or 'code' in title or 'programmation' in title or 'python' in title or 'c++' in title %}
+                                    {% set icon = 'code' %}
+                                {% elseif 'data' in title or 'donnée' in title %}
+                                    {% set icon = 'database' %}
+                                {% elseif 'design' in title or 'ui' in title or 'ux' in title %}
+                                    {% set icon = 'palette' %}
+                                {% elseif 'info' in title or 'ordinateur' in title %}
+                                    {% set icon = 'desktop' %}
+                                {% elseif 'brain' in title or 'ia' in title or 'intelligence' in title %}
+                                    {% set icon = 'brain' %}
+                                {% endif %}
+                                <i class="fas fa-{{ icon }}"></i>
+                            </div>
+                            <div class="course-details">
+                                <h3>{{ course.title }}</h3>
+                                <p>Découvrez les modules et ressources liés à ce cours interactif.</p>
+                                <div class="course-meta">
+                                    <span><i class="fas fa-tag"></i> #{{ course.codeUnique }}</span>
+                                    <span><i class="far fa-calendar-alt"></i> {{ course.createdAt|date('d/m/Y') }}</span>
+                                </div>
+                            </div>
+                            <a href="{{ path('app_course_show', {'id': course.id}) }}" class="btn-circle">
+                                <i class="fas fa-arrow-right"></i>
+                            </a>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </main>
+
+        <!-- 2. INFO PANEL (Right) -->
+        <aside class="info-panel" style="width: 100%;">
+            <div class="profile-top">
+                <div class="profile-info-text">
+                    <h4 class="mb-0">{{ app.user.prenom }} {{ app.user.nom }}</h4>
+                    <span>Professeur</span>
+                </div>
+                <!-- Fixed Avatar URL -->
+                <img src="https://ui-avatars.com/api/?name={{ app.user.prenom }}+{{ app.user.nom }}&background=4c51bf&color=fff&bold=true" class="profile-avatar-small" alt="Avatar">
+            </div>
+
+            <!-- Calendar Widget -->
+            {% set now = date() %}
+            {% set currentMonth = now|date('F Y') %}
+            {% set currentDay = now|date('j') %}
+            {% set daysInMonth = now|date('t') %}
+            {% set firstDayOfMonth = now|date_modify('-' ~ (currentDay - 1) ~ ' days') %}
+            {% set startDayOfWeek = firstDayOfMonth|date('N') %}
+            
+            <div class="calendar-mock">
+                <div class="calendar-header">
+                    <span>{{ currentMonth }}</span>
+                </div>
+                <div class="calendar-grid">
+                    <span class="text-muted">L</span><span class="text-muted">M</span><span class="text-muted">M</span><span class="text-muted">J</span><span class="text-muted">V</span><span class="text-muted">S</span><span class="text-muted">D</span>
+                    
+                    {% for i in 1..(startDayOfWeek - 1) %}
+                        <span class="day-cell empty"></span>
+                    {% endfor %}
+                    
+                    {% for day in 1..daysInMonth %}
+                        <span class="day-cell {{ day == currentDay ? 'active' : '' }}">{{ day }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- Robust Responsive Layout Styles -->
+    <style>
+        /* Main Layout Container */
+        .dashboard-layout-wrapper {
+            display: flex;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+            gap: 30px;
+            max-width: 1600px;
+            margin: 0 auto;
+            align-items: flex-start; /* Prevent stretching */
+            width: 100%;
+        }
+
+        /* 1. Main Content Area */
+        .main-area {
+            flex: 1 1 700px; /* Grow, Shrink, Basis 700px - Will wrap if < 700px space */
+            min-width: 0; /* Prevent flex overflow */
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        /* 2. Info Panel (Sidebar) */
+        .info-panel {
+            flex: 0 0 350px; /* Fixed width 350px, don't grow/shrink */
+            background: transparent; /* Ensure it blends */
+            position: sticky;
+            top: 20px; /* Sticky effect on desktop */
+            width: 100%; /* Fallback */
+            max-width: 350px;
+        }
+
+        /* Responsive Behavior */
+        @media (max-width: 1100px) {
+            .dashboard-layout-wrapper {
+                flex-direction: column; /* Stack vertically on tablets */
+            }
+
+            .main-area {
+                flex: auto;
+                width: 100%;
+            }
+
+            .info-panel {
+                flex: auto;
+                width: 100%;
+                max-width: 100%; /* Full width when stacked */
+                position: static; /* Remove sticky when stacked */
+                order: 2; /* Put at bottom if preferred, or keep default */
+                margin-top: 20px;
+            }
+            
+            /* Make calendar grid responsive when full width */
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr) !important;
+            }
+        }
+
+        /* Banner Styling */
+        .welcome-banner {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+            border: 1px solid #f1f5f9;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner h1 {
+            color: #1e293b;
+            font-size: 1.5rem; /* Slightly smaller for better fit */
+            font-weight: 800;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: -0.02em;
+        }
+
+        .quote-text {
+            color: #64748b;
+            font-style: italic;
+            font-size: 0.9rem;
+            line-height: 1.5;
+        }
+
+        /* Stats Grid - Responsive */
+        .stats-horizontal {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); /* Auto-fit columns */
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .stat-block {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            min-height: 160px; /* Fixed height consistency */
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            border: 1px solid #f8fafc;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .stat-block:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        }
+
+        /* Colors */
+        .stat-block.blue { background: linear-gradient(145deg, #eff6ff, #ffffff); color: #1d4ed8; }
+        .stat-block.green { background: linear-gradient(145deg, #f0fdf4, #ffffff); color: #15803d; }
+        .stat-block.purple { background: linear-gradient(145deg, #faf5ff, #ffffff); color: #7e22ce; }
+
+        .stat-block .value {
+            font-size: 3rem;
+            font-weight: 800;
+            line-height: 1;
+            margin-bottom: 5px;
+            letter-spacing: -0.03em;
+        }
+
+        .stat-block .label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            opacity: 0.7;
+        }
+
+        /* Calendar Styles to match screenshot more closely */
+        .calendar-mock {
+            background: #f8fafc;
+            border-radius: 24px;
+            padding: 25px;
+            border: 1px solid #e2e8f0;
+        }
+        
+        .calendar-header {
+            font-weight: 800;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            color: #1e293b;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            text-align: center;
+            font-size: 0.85rem;
+        }
+
+        .day-cell {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .day-cell.active {
+            background: #4f46e5;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 6px -1px rgba(79, 70, 229, 0.3);
+        }
+        
+        .text-muted {
+            font-weight: 700;
+            color: #94a3b8;
+            font-size: 0.75rem;
+            margin-bottom: 10px;
+        }
+    </style>
+{% endblock %}

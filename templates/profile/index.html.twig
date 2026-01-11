@@ -1,0 +1,88 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<main class="main-area p-8 max-w-6xl mx-auto">
+    <!-- Profile Card Container -->
+    <div class="bg-white rounded-[30px] shadow-sm overflow-hidden mb-8 relative">
+        
+        <!-- 1. Striped Banner -->
+        <div class="h-48 relative overflow-hidden" style="background-color: #3b82f6;">
+             <div class="absolute inset-0" style="background-image: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255,255,255,0.1) 10px, rgba(255,255,255,0.1) 20px);"></div>
+        </div>
+
+        <!-- 2. Profile Info Section -->
+        <div class="px-10 pb-10 relative">
+            <div class="flex items-end -mt-16 mb-6">
+                
+                <!-- Square Avatar with specific rounded corners and green dot -->
+                <div class="relative z-10">
+                    <div class="w-36 h-36 rounded-[2rem] border-[6px] border-white shadow-lg bg-blue-500 flex items-center justify-center overflow-hidden relative">
+                        <!-- Initials -->
+                        <div class="text-white text-5xl font-bold">
+                            {{ user.prenom|slice(0,1)|upper }}{{ user.nom|slice(0,1)|upper }}
+                        </div>
+                        
+                        <!-- Green Online Dot (Inside the shape mostly, bottom right) -->
+                        <div class="absolute bottom-3 right-3 w-5 h-5 bg-emerald-400 rounded-full border-2 border-blue-500"></div>
+                    </div>
+                </div>
+
+                <!-- Text Info (Name & Role) -->
+                <div class="ml-6 mb-2 flex-1">
+                    <h1 class="text-3xl font-bold text-gray-800 mb-1 capitalize">
+                        {{ user.prenom }} {{ user.nom }}
+                    </h1>
+                    <div class="flex items-center gap-3">
+                        <span class="bg-blue-600 text-white text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">
+                            {% if 'ROLE_SUPER_ADMIN' in user.roles %} Directeur
+                            {% elseif 'ROLE_ADMIN' in user.roles %} Admin
+                            {% elseif 'ROLE_TEACHER' in user.roles %} Professeur
+                            {% elseif 'ROLE_STUDENT' in user.roles %} Étudiant
+                            {% else %} Utilisateur
+                            {% endif %}
+                        </span>
+                        <span class="text-gray-500 text-sm flex items-center gap-1">
+                            <i class="fas fa-envelope text-blue-400"></i> {{ user.email }}
+                        </span>
+                        <span class="text-gray-400 text-sm flex items-center gap-1">
+                            <i class="far fa-calendar-alt"></i> Membre depuis {{ user.createdAt|date('F Y') }}
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. Personal Information Card (Bottom Section) -->
+             <div class="bg-white border border-gray-100 rounded-2xl p-8 mt-8 shadow-sm">
+                <div class="flex items-center gap-2 mb-6">
+                    <i class="fas fa-user text-blue-600"></i>
+                    <h3 class="text-lg font-bold text-gray-800">Informations personnelles</h3>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-y-8 gap-x-12">
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Prénom</p>
+                        <p class="text-base font-medium text-gray-700 capitalize">{{ user.prenom }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Nom</p>
+                        <p class="text-base font-medium text-gray-700 capitalize">{{ user.nom }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Email</p>
+                        <p class="text-base font-medium text-gray-700">{{ user.email }}</p>
+                    </div>
+                    <div>
+                        <p class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-1">Rôle</p>
+                        <p class="text-base font-medium text-gray-700">
+                             {% if 'ROLE_TEACHER' in user.roles %}Professeur{% else %}Utilisateur{% endif %}
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</main>
+{% endblock %}

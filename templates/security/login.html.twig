@@ -1,0 +1,103 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mini-LMS | Connexion{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-box">
+        <!-- Left Side: Welcome Panel -->
+        <div class="login-left">
+            <h2>BIENVENUE</h2>
+            <p>Connectez-vous à votre espace personnel pour accéder à vos contenus pédagogiques et suivre vos progrès en toute simplicité.</p>
+        </div>
+
+        <!-- Right Side: Login Form -->
+        <div class="login-right">
+            <div class="login-form-content">
+                <h1>Se Connecter</h1>
+                
+                <form method="post">
+                    {% if error %}
+                        <div class="alert-error">
+                            {% if error.messageKey == 'Invalid credentials.' %}
+                                Identifiants invalides.
+                            {% else %}
+                                {{ error.messageKey|trans(error.messageData, 'security') }}
+                            {% endif %}
+                        </div>
+                    {% endif %}
+
+                    {% if app.user %}
+                        <div class="mb-4 text-center">
+                            <p class="small">Session active : <strong>{{ app.user.userIdentifier }}</strong></p>
+                            <a href="{{ logout_path() }}" class="text-danger small">Fermer la session</a>
+                        </div>
+                    {% endif %}
+
+                    <div class="input-container">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" value="{{ last_username }}" name="email" id="inputEmail" placeholder="Email" autocomplete="email" required autofocus>
+                    </div>
+
+                    <div class="input-container">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" name="password" id="inputPassword" placeholder="Mot de passe" autocomplete="current-password" required>
+                        <i class="fas fa-eye toggle-password" id="togglePassword"></i>
+                    </div>
+
+                    <input type="hidden" name="_csrf_token" data-controller="csrf-protection" value="{{ csrf_token('authenticate') }}">
+
+                    <div class="text-center mt-3">
+                        <button type="submit" class="btn-login">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </button>
+                    </div>
+                </form>
+
+
+            </div>
+            
+            <p class="footer-text">© 2026 Mini-LMS - Excellence Éducative</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.login-footer {
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+}
+
+.login-footer p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+.register-link {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.register-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+</style>
+
+<script>
+    const togglePassword = document.querySelector('#togglePassword');
+    const password = document.querySelector('#inputPassword');
+
+    togglePassword.addEventListener('click', function (e) {
+        // toggle the type attribute
+        const type = password.getAttribute('type') === 'password' ? 'text' : 'password';
+        password.setAttribute('type', type);
+        // toggle the eye slash icon
+        this.classList.toggle('fa-eye-slash');
+    });
+</script>
+{% endblock %}

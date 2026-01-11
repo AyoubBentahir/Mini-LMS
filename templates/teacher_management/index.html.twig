@@ -1,0 +1,86 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Gestion des Enseignants{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="page-header-unified">
+        <h1>Gestion des Enseignants</h1>
+        
+        <a href="{{ path('app_teacher_new') }}" class="btn-create-unified">
+            <i class="fas fa-plus"></i> Créer Enseignant
+        </a>
+    </div>
+
+    {% for message in app.flashes('success') %}
+        <div class="alert alert-success">
+            <i class="fas fa-check-circle"></i> {{ message }}
+        </div>
+    {% endfor %}
+
+    <div class="course-management-grid">
+        {% for teacher in teachers %}
+            <div class="course-manage-card">
+                <div class="course-card-header">
+                    <div class="course-icon-wrapper">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <span class="course-badge {{ teacher.isIsActive ? 'code' : 'design' }}">
+                        {{ teacher.isIsActive ? 'Actif' : 'Inactif' }}
+                    </span>
+                </div>
+
+                <h3>{{ teacher.prenom }} {{ teacher.nom }}</h3>
+                <p class="course-description">
+                    <i class="fas fa-envelope"></i> {{ teacher.email }}
+                </p>
+
+                <div class="course-stats">
+                    <div class="stat-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <span>{{ teacher.createdAt|date('d/m/Y') }}</span>
+                    </div>
+                </div>
+
+                <div class="course-card-actions">
+                    <a href="{{ path('app_teacher_show', {'id': teacher.id}) }}" class="btn-card-action view">
+                        <i class="fas fa-eye"></i> Voir
+                    </a>
+                    <a href="{{ path('app_teacher_edit', {'id': teacher.id}) }}" class="btn-card-action edit">
+                        <i class="fas fa-edit"></i> Modifier
+                    </a>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                </div>
+                <h3>Aucun enseignant</h3>
+                <p>Commencez par créer votre premier enseignant</p>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+
+<style>
+.alert {
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    border: 1px solid #10b981;
+}
+
+.alert i {
+    font-size: 1.25rem;
+}
+</style>
+{% endblock %}

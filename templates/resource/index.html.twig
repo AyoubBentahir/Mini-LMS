@@ -1,0 +1,116 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mes Ressources{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="page-header-unified">
+        <h1>Mes Ressources</h1>
+        
+        <div class="search-wrapper-unified">
+            <i class="fas fa-search"></i>
+            <input type="text" placeholder="Rechercher une ressource..." id="resourceSearch">
+        </div>
+        
+        <a href="{{ path('app_resource_new') }}" class="btn-create-unified">
+            <i class="fas fa-plus"></i> Créer Nouvelle Ressource
+        </a>
+    </div>
+
+    <div class="resource-grid">
+        {% for resource in resources %}
+            {% set type_lower = resource.type|lower %}
+            
+            {# Smart Icon Detection based on resource type #}
+            {% if 'pdf' in type_lower or 'document' in type_lower %}
+                {% set icon = 'fa-file-pdf' %}
+                {% set type_class = 'pdf' %}
+            {% elseif 'video' in type_lower or 'mp4' in type_lower %}
+                {% set icon = 'fa-video' %}
+                {% set type_class = 'video' %}
+            {% elseif 'image' in type_lower or 'photo' in type_lower or 'png' in type_lower or 'jpg' in type_lower %}
+                {% set icon = 'fa-image' %}
+                {% set type_class = 'image' %}
+            {% elseif 'lien' in type_lower or 'link' in type_lower or 'url' in type_lower %}
+                {% set icon = 'fa-link' %}
+                {% set type_class = 'link' %}
+            {% elseif 'audio' in type_lower or 'mp3' in type_lower %}
+                {% set icon = 'fa-headphones' %}
+                {% set type_class = 'audio' %}
+            {% elseif 'texte' in type_lower or 'text' in type_lower %}
+                {% set icon = 'fa-file-alt' %}
+                {% set type_class = 'text' %}
+            {% elseif 'code' in type_lower %}
+                {% set icon = 'fa-code' %}
+                {% set type_class = 'code' %}
+            {% else %}
+                {% set icon = 'fa-file' %}
+                {% set type_class = 'general' %}
+            {% endif %}
+            
+            <div class="resource-card" data-resource-title="{{ resource.title|lower }}">
+                <div class="resource-icon-wrapper {{ type_class }}">
+                    <i class="fas {{ icon }}"></i>
+                </div>
+                
+                <div class="resource-header">
+                    <h3>{{ resource.title }}</h3>
+                    <span class="resource-type-badge {{ type_class }}">{{ resource.type|upper }}</span>
+                </div>
+                
+                <p class="resource-content">
+                    {{ resource.content|default('Aucun contenu disponible')|length > 100 ? resource.content|default('Aucun contenu disponible')|slice(0, 100) ~ '...' : resource.content|default('Aucun contenu disponible') }}
+                </p>
+                
+                <div class="resource-footer">
+                    <div class="resource-module">
+                        <i class="fas fa-layer-group"></i>
+                        <span>{{ resource.module ? resource.module.title : 'Non assigné' }}</span>
+                    </div>
+                    
+                    <div class="resource-actions">
+                        <a href="{{ path('app_resource_show', {'id': resource.id}) }}" class="btn-resource-action view" title="Voir">
+                            <i class="fas fa-eye"></i>
+                        </a>
+                        <a href="{{ path('app_resource_edit', {'id': resource.id}) }}" class="btn-resource-action edit" title="Modifier">
+                            <i class="fas fa-edit"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="empty-state">
+                <div class="empty-state-icon">
+                    <i class="fas fa-file-alt"></i>
+                </div>
+                <h3>Aucune ressource disponible</h3>
+                <p>Ajoutez des ressources pour enrichir vos modules et cours.</p>
+                <a href="{{ path('app_resource_new') }}" class="btn-create-resource">
+                    <i class="fas fa-plus"></i> Créer ma première ressource
+                </a>
+            </div>
+        {% endfor %}
+    </div>
+</main>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const searchInput = document.getElementById('resourceSearch');
+    if (searchInput) {
+        searchInput.addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            const resourceCards = document.querySelectorAll('.resource-card');
+            
+            resourceCards.forEach(card => {
+                const title = card.getAttribute('data-resource-title');
+                if (title.includes(searchTerm)) {
+                    card.style.display = 'flex';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+    }
+});
+</script>
+{% endblock %}

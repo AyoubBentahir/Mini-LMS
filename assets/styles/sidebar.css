@@ -1,0 +1,57 @@
+/* Sidebar Refined (Navy Blue Gradient from Auth) */
+.sidebar {
+    background: linear-gradient(135deg, #1e3a8a 0%, #1e40af 100%);
+    padding: 40px 15px;
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    /* Fixed so it never scrolls away */
+    left: 0;
+    top: 0;
+    width: var(--sidebar-width);
+    height: 100vh;
+    color: white;
+    z-index: 1000;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    padding: 14px 20px;
+    border-radius: 12px;
+    color: rgba(255, 255, 255, 0.75);
+    text-decoration: none;
+    margin-bottom: 10px;
+    transition: 0.3s;
+    font-weight: 500;
+}
+
+.nav-item i {
+    font-size: 1.1rem;
+    margin-right: 15px;
+    width: 20px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 1024px) {
+    .sidebar {
+        width: 200px;
+    }
+    
+    .nav-item {
+        padding: 12px 15px;
+        font-size: 0.9rem;
+    }
+}

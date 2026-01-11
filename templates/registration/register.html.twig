@@ -1,0 +1,198 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mini-LMS | Inscription{% endblock %}
+
+{% block body %}
+<div class="login-container">
+    <div class="login-box">
+        <!-- Left Side: Welcome Panel -->
+        <div class="login-left">
+            <h2>REJOIGNEZ-NOUS</h2>
+            <p>Créez votre compte étudiant et accédez à une plateforme d'apprentissage moderne et intuitive pour développer vos compétences.</p>
+        </div>
+
+        <!-- Right Side: Registration Form -->
+        <div class="login-right">
+            <div class="login-form-content">
+                <h1>Inscription Étudiant</h1>
+                
+                {{ form_start(registrationForm) }}
+                    <div class="input-container">
+                        <i class="fas fa-envelope"></i>
+                        {{ form_widget(registrationForm.email, {
+                            'attr': {
+                                'placeholder': 'Adresse Email',
+                                'required': true
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="input-row">
+                        <div class="input-container">
+                            <i class="fas fa-user"></i>
+                            {{ form_widget(registrationForm.prenom, {
+                                'attr': {
+                                    'placeholder': 'Prénom',
+                                    'required': true
+                                }
+                            }) }}
+                        </div>
+                        <div class="input-container">
+                            <i class="fas fa-user"></i>
+                            {{ form_widget(registrationForm.nom, {
+                                'attr': {
+                                    'placeholder': 'Nom',
+                                    'required': true
+                                }
+                            }) }}
+                        </div>
+                    </div>
+
+                    <div class="input-container">
+                        <i class="fas fa-lock"></i>
+                        {{ form_widget(registrationForm.plainPassword.first, {
+                            'attr': {
+                                'placeholder': 'Mot de passe (min. 6 caractères)',
+                                'required': true
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="input-container">
+                        <i class="fas fa-lock"></i>
+                        {{ form_widget(registrationForm.plainPassword.second, {
+                            'attr': {
+                                'placeholder': 'Confirmer le mot de passe',
+                                'required': true
+                            }
+                        }) }}
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <button class="login-btn-solid" type="submit">
+                            <i class="fas fa-user-plus"></i> S'INSCRIRE
+                        </button>
+                    </div>
+                {{ form_end(registrationForm) }}
+
+                <div class="login-footer">
+                    <p>Vous avez déjà un compte? <a href="{{ path('app_login') }}" class="register-link">Se connecter</a></p>
+                </div>
+            </div>
+            
+            <div style="height: 2rem;"></div>
+            
+            <p class="footer-text">© 2026 Mini-LMS - Excellence Éducative</p>
+        </div>
+    </div>
+</div>
+
+<style>
+.input-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.input-container {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.input-container i {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+    font-size: 1.1rem;
+}
+
+.input-container input {
+    width: 100%;
+    padding: 0.875rem 1rem 0.875rem 3rem;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    background: white;
+}
+
+.input-container input:focus {
+    outline: none;
+    border-color: #3b5bdb;
+    box-shadow: 0 0 0 3px rgba(59, 91, 219, 0.1);
+}
+
+.input-container input::placeholder {
+    color: #9ca3af;
+}
+
+.login-btn-solid {
+    width: 100%;
+    padding: 0.875rem;
+    background: linear-gradient(135deg, #3b5bdb, #4c6ef5);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.login-btn-solid:hover {
+    background: linear-gradient(135deg, #364fc7, #3b5bdb);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(59, 91, 219, 0.3);
+}
+
+.login-footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e5e7eb;
+    text-align: center;
+    margin-bottom: 1.5rem;
+}
+
+.login-footer p {
+    color: #6b7280;
+    font-size: 0.95rem;
+}
+
+.register-link {
+    color: #3b82f6;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.register-link:hover {
+    color: #2563eb;
+    text-decoration: underline;
+}
+
+.text-center {
+    text-align: center;
+}
+
+.mt-3 {
+    margin-top: 1rem;
+}
+
+.footer-text {
+    margin-top: 2rem !important;
+}
+
+@media (max-width: 768px) {
+    .input-row {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

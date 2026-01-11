@@ -1,0 +1,170 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails Enseignant{% endblock %}
+
+{% block body %}
+<main class="main-area">
+    <div class="page-header-unified">
+        <h1>Détails de l'Enseignant</h1>
+        
+        <a href="{{ path('app_teacher_index') }}" class="btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-header">
+            <div class="detail-icon">
+                <i class="fas fa-chalkboard-teacher"></i>
+            </div>
+            <div>
+                <h2>{{ teacher.prenom }} {{ teacher.nom }}</h2>
+                <p class="detail-subtitle">{{ teacher.email }}</p>
+            </div>
+        </div>
+
+        <div class="detail-grid">
+            <div class="detail-item">
+                <label><i class="fas fa-id-badge"></i> ID</label>
+                <span>{{ teacher.id }}</span>
+            </div>
+
+            <div class="detail-item">
+                <label><i class="fas fa-envelope"></i> Email</label>
+                <span>{{ teacher.email }}</span>
+            </div>
+
+            <div class="detail-item">
+                <label><i class="fas fa-user"></i> Nom</label>
+                <span>{{ teacher.nom }}</span>
+            </div>
+
+            <div class="detail-item">
+                <label><i class="fas fa-user"></i> Prénom</label>
+                <span>{{ teacher.prenom }}</span>
+            </div>
+
+            <div class="detail-item">
+                <label><i class="fas fa-calendar-alt"></i> Date de création</label>
+                <span>{{ teacher.createdAt|date('d/m/Y à H:i') }}</span>
+            </div>
+
+            <div class="detail-item">
+                <label><i class="fas fa-toggle-on"></i> Statut</label>
+                <span class="status-badge {{ teacher.isIsActive ? 'active' : 'inactive' }}">
+                    {% if teacher.isIsActive %}
+                        <i class="fas fa-check-circle"></i> Actif
+                    {% else %}
+                        <i class="fas fa-times-circle"></i> Inactif
+                    {% endif %}
+                </span>
+            </div>
+        </div>
+    </div>
+</main>
+
+<style>
+.detail-card {
+    background: white;
+    border-radius: 20px;
+    padding: 2rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    max-width: 900px;
+}
+
+.detail-header {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    padding-bottom: 2rem;
+    border-bottom: 2px solid var(--background);
+    margin-bottom: 2rem;
+}
+
+.detail-icon {
+    width: 80px;
+    height: 80px;
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    border-radius: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.detail-icon i {
+    font-size: 2.5rem;
+    color: white;
+}
+
+.detail-header h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin: 0;
+}
+
+.detail-subtitle {
+    color: var(--text-muted);
+    font-size: 1rem;
+    margin: 0.25rem 0 0 0;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2rem;
+}
+
+.detail-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.detail-item label {
+    font-weight: 600;
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.detail-item label i {
+    color: #667eea;
+}
+
+.detail-item span {
+    font-size: 1.1rem;
+    color: var(--text-dark);
+    font-weight: 500;
+}
+
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+}
+
+.status-badge.active {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.status-badge.inactive {
+    background: #fee2e2;
+    color: #991b1b;
+}
+
+@media (max-width: 768px) {
+    .detail-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}

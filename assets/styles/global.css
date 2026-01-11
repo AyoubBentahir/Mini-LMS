@@ -1,0 +1,28 @@
+:root {
+    --primary-blue: #1e3a8a;
+    --primary-blue-light: #1e40af;
+    --secondary-blue: #3b82f6;
+    --bg-light: #f8fafc;
+    --text-dark: #1e293b;
+    --text-muted: #64748b;
+    --white: #ffffff;
+    --sidebar-width: 240px;
+    --info-panel-width: 320px;
+    --premium-bg: #f8faff;
+    --premium-indigo: #4c51bf;
+    --premium-purple: #667eea;
+    --card-shadow: 0 10px 25px rgba(102, 126, 234, 0.05);
+}
+
+/* GLOBAL RESET */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Inter', -apple-system, sans-serif;
+}
+
+body {
+    background-color: var(--premium-bg);
+    color: var(--text-dark);
+}
